@@ -4,18 +4,19 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF13161c),
       body: Column(
         children: [
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            color: Colors.white,
+            color: Color(0xFF13161c),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'CourseHub',
                   style: TextStyle(
-                    color: Colors.blue.shade900,
+                    color: Color(0xFF7ff9cb),
                     fontSize: 20.0,
                     fontWeight: FontWeight.bold,
                   ),
@@ -94,9 +95,8 @@ class HomeScreen extends StatelessWidget {
             children: <Widget>[
               Text(
                 '¡Bienvenido al sistema!',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
               ),
-              Text('Fecha: ${DateTime.now().toString()}'),
             ],
           ),
         ],
@@ -118,6 +118,7 @@ class HomeScreen extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
+                  color: Colors.white
                 ),
               ),
               SizedBox(height: 10),
@@ -156,6 +157,7 @@ class HomeScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
+                color: Colors.white
               ),
             ),
             SizedBox(height: 10),
@@ -195,7 +197,7 @@ class CourseItem extends StatelessWidget {
       width: 200,
       margin: EdgeInsets.only(right: 16),
       decoration: BoxDecoration(
-        color: Colors.blue,
+        color: Color(0xFF7ff9cb),
         borderRadius: BorderRadius.circular(10),
       ),
       padding: EdgeInsets.all(16),
@@ -205,7 +207,7 @@ class CourseItem extends StatelessWidget {
           Text(
             courseName,
             style: TextStyle(
-              color: Colors.white,
+              color: Color(0xFF13161c),
               fontWeight: FontWeight.bold,
               fontSize: 18,
             ),
@@ -214,14 +216,14 @@ class CourseItem extends StatelessWidget {
           Text(
             tutorName,
             style: TextStyle(
-              color: Colors.white,
+              color: Color(0xFF13161c),
             ),
           ),
           SizedBox(height: 8),
           Text(
             schedule,
             style: TextStyle(
-              color: Colors.white,
+              color: Color(0xFF13161c),
             ),
           ),
         ],

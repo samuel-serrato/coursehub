@@ -29,11 +29,11 @@ class _NavigationRailScreenState extends State<NavigationRailScreen> {
             minWidth: 100,
             labelType: NavigationRailLabelType.all,
             selectedLabelTextStyle: TextStyle(
-                color: Color(0xFF2A61FF), fontWeight: FontWeight.bold),
+                color: Colors.white, fontWeight: FontWeight.bold),
             unselectedLabelTextStyle: TextStyle(
                 color: Color(0xFF5A5A5A), fontWeight: FontWeight.bold),
-            backgroundColor: Colors.white,
-            indicatorColor: Color(0xFFF2F6FF),
+            backgroundColor: Color(0xFF13161c),
+            indicatorColor: Color(0xFF1d2029),
             useIndicator: true,
             selectedIndex: _selectedIndex,
             onDestinationSelected: (int index) {
@@ -45,24 +45,24 @@ class _NavigationRailScreenState extends State<NavigationRailScreen> {
               NavigationRailDestination(
                 icon: Icon(
                   Icons.home,
-                  color: Color(0xFF5A5A5A),
+                  color: Color.fromARGB(255, 223, 223, 223),
                 ),
-                selectedIcon: Icon(Icons.home, color: Color(0xFF2A61FF)),
+                selectedIcon: Icon(Icons.home, color: Colors.white ),
                 label: Text('Home'),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.book, color: Color(0xFF5A5A5A)),
-                selectedIcon: Icon(Icons.book, color: Color(0xFF2A61FF)),
+                icon: Icon(Icons.book, color: Color.fromARGB(255, 223, 223, 223)),
+                selectedIcon: Icon(Icons.book, color: Colors.white),
                 label: Text('Cursos'),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.chat_sharp, color: Color(0xFF5A5A5A)),
-                selectedIcon: Icon(Icons.chat_sharp, color: Color(0xFF2A61FF)),
+                icon: Icon(Icons.chat_sharp, color: Color.fromARGB(255, 223, 223, 223)),
+                selectedIcon: Icon(Icons.chat_sharp, color: Colors.white),
                 label: Text('Chats'),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.settings, color: Color(0xFF5A5A5A)),
-                selectedIcon: Icon(Icons.settings, color: Color(0xFF2A61FF)),
+                icon: Icon(Icons.settings, color: Color.fromARGB(255, 223, 223, 223)),
+                selectedIcon: Icon(Icons.settings, color: Colors.white),
                 label: Text('Configuracion'),
               ),
             ],
