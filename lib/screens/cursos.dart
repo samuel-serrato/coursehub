@@ -9,17 +9,24 @@ class CursosScreen extends StatelessWidget {
         title: Text('Cursos'),
       ), */
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildCursoRow('Recomendados para ti', 7),
-            SizedBox(height: 50.0),
-            _buildCursoRow('Nuevos', 7),
-            SizedBox(height: 50.0),
-            _buildCursoRow('Matemáticas', 7),
-            SizedBox(height: 50.0),
-            _buildCursoRow('Desarrollo de Software', 7),
+            header(),
+            Container(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                children: [
+              _buildCursoRow('Recomendados para ti', 7),
+              SizedBox(height: 50.0),
+              _buildCursoRow('Nuevos', 7),
+              SizedBox(height: 50.0),
+              _buildCursoRow('Matemáticas', 7),
+              SizedBox(height: 50.0),
+              _buildCursoRow('Desarrollo de Software', 7),
+                ]
+              ),
+            ),
           ],
         ),
       ),
@@ -68,8 +75,8 @@ class CursosScreen extends StatelessWidget {
               left: 0,
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(10),
+                  color: const Color.fromARGB(221, 46, 46, 46),
                 ),
                 child: IconButton(
                   hoverColor: Colors.transparent,
@@ -82,11 +89,17 @@ class CursosScreen extends StatelessWidget {
             ),
             Positioned(
               right: 0,
-              child: IconButton(
-                icon: Icon(Icons.arrow_forward),
-                onPressed: () {
-                  _scroll(true); // Scroll hacia la derecha
-                },
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: const Color.fromARGB(221, 46, 46, 46),
+                ),
+                child: IconButton(
+                  icon: Icon(Icons.arrow_forward, color: Colors.white,),
+                  onPressed: () {
+                    _scroll(true); // Scroll hacia la derecha
+                  },
+                ),
               ),
             ),
           ],
@@ -134,6 +147,53 @@ class CursosScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+  Widget header() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      color: Color(0xFF13161c),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'CourseHub',
+            style: TextStyle(
+              color: Color(0xFF7ff9cb),
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.all(10.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20.0),
+              border: Border.all(color: Colors.black),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.person, color: Colors.black),
+                SizedBox(width: 10.0),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Nombre del usuario Completo',
+                      style: TextStyle(fontSize: 12, color: Colors.black),
+                    ),
+                    Text(
+                      'Tipo de usuario',
+                      style: TextStyle(fontSize: 12, color: Colors.black),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

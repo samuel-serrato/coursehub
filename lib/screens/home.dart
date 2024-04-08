@@ -7,51 +7,7 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: Color(0xFF13161c),
       body: Column(
         children: [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            color: Color(0xFF13161c),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'CourseHub',
-                  style: TextStyle(
-                    color: Color(0xFF7ff9cb),
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20.0),
-                    border: Border.all(color: Colors.black),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.person, color: Colors.black),
-                      SizedBox(width: 10.0),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Nombre del usuario Completo',
-                            style: TextStyle(fontSize: 12, color: Colors.black),
-                          ),
-                          Text(
-                            'Tipo de usuario',
-                            style: TextStyle(fontSize: 12, color: Colors.black),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
+          header(),
           Expanded(
             child: content(context),
           ),
@@ -66,7 +22,7 @@ class HomeScreen extends StatelessWidget {
         VerticalDivider(thickness: 1, width: 1),
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -95,7 +51,10 @@ class HomeScreen extends StatelessWidget {
             children: <Widget>[
               Text(
                 '¡Bienvenido al sistema!',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
               ),
             ],
           ),
@@ -116,10 +75,9 @@ class HomeScreen extends StatelessWidget {
               Text(
                 'Cursos Activos:',
                 style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white
-                ),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
               ),
               SizedBox(height: 10),
               SingleChildScrollView(
@@ -155,10 +113,9 @@ class HomeScreen extends StatelessWidget {
             Text(
               'Cursos Completados:',
               style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.white
-              ),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
             ),
             SizedBox(height: 10),
             CourseItem(
@@ -175,6 +132,54 @@ class HomeScreen extends StatelessWidget {
             // Agrega más cursos completados según sea necesario
           ],
         ),
+      ),
+    );
+  }
+
+  Widget header() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      color: Color(0xFF13161c),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'CourseHub',
+            style: TextStyle(
+              color: Color(0xFF7ff9cb),
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.all(10.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20.0),
+              border: Border.all(color: Colors.black),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.person, color: Colors.black),
+                SizedBox(width: 10.0),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Nombre del usuario Completo',
+                      style: TextStyle(fontSize: 12, color: Colors.black),
+                    ),
+                    Text(
+                      'Tipo de usuario',
+                      style: TextStyle(fontSize: 12, color: Colors.black),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
