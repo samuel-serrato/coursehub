@@ -1,6 +1,8 @@
-import 'package:coursehub/navigation_rail.dart';
+import 'package:coursehub/navigation_railEstudiante.dart';
 import 'package:coursehub/screens/login.dart';
 import 'package:flutter/material.dart';
+
+import 'navigation_railTutor.dart';
 
 void main() {
   runApp(MyApp());
@@ -15,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: NavigationRailScreen(),
+      home: LoginScreen(),
     );
   }
 }

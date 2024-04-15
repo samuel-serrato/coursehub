@@ -1,20 +1,20 @@
-import 'package:coursehub/screens/chats.dart';
-import 'package:coursehub/screens/configuracion.dart';
-import 'package:coursehub/screens/cursos.dart';
-import 'package:coursehub/screens/home.dart';
+import 'package:coursehub/screens/tutor/chats.dart';
+import 'package:coursehub/screens/tutor/configuracion.dart';
+import 'package:coursehub/screens/tutor/cursos.dart';
+import 'package:coursehub/screens/tutor/homeTutor.dart';
 import 'package:flutter/material.dart';
 
-class NavigationRailScreen extends StatefulWidget {
+class NavigationRailTScreen extends StatefulWidget {
   @override
-  _NavigationRailScreenState createState() => _NavigationRailScreenState();
+  _NavigationRailTScreenState createState() => _NavigationRailTScreenState();
 }
 
-class _NavigationRailScreenState extends State<NavigationRailScreen> {
+class _NavigationRailTScreenState extends State<NavigationRailTScreen> {
   int _selectedIndex = 0;
 
   List<Widget> _widgetOptions = <Widget>[
     HomeScreen(),
-    CursosScreen(),
+    //CursosScreen(),
     ChatsScreen(),
     ConfiguracionScreen()
   ];
@@ -51,10 +51,10 @@ class _NavigationRailScreenState extends State<NavigationRailScreen> {
                   icon: Icon(Icons.home),
                   label: 'Home',
                 ),
-                BottomNavigationBarItem(
+                /* BottomNavigationBarItem(
                   icon: Icon(Icons.book),
                   label: 'Cursos',
-                ),
+                ), */
                 BottomNavigationBarItem(
                   icon: Icon(Icons.chat_sharp),
                   label: 'Chats',
@@ -97,12 +97,12 @@ class _NavigationRailScreenState extends State<NavigationRailScreen> {
                       selectedIcon: Icon(Icons.home, color: Colors.white),
                       label: Text('Home'),
                     ),
-                    NavigationRailDestination(
+                    /* NavigationRailDestination(
                       icon: Icon(Icons.book,
                           color: Color.fromARGB(255, 223, 223, 223)),
                       selectedIcon: Icon(Icons.book, color: Colors.white),
                       label: Text('Cursos'),
-                    ),
+                    ), */
                     NavigationRailDestination(
                       icon: Icon(Icons.chat_sharp,
                           color: Color.fromARGB(255, 223, 223, 223)),
