@@ -17,24 +17,26 @@ class _CursosScreenState extends State<CursosScreen> {
         title: Text('Cursos'),
       ), */
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            header(),
-            search(),
-            Container(
-              padding: EdgeInsets.all(20),
-              child: Column(children: [
-                _buildCursoRow('Recomendados para ti', 7),
-                SizedBox(height: 50.0),
-                _buildCursoRow('Nuevos', 7),
-                SizedBox(height: 50.0),
-                _buildCursoRow('Matemáticas', 7),
-                SizedBox(height: 50.0),
-                _buildCursoRow('Desarrollo de Software', 7),
-              ]),
-            ),
-          ],
+        child: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              header(context),
+              search(),
+              Container(
+                padding: EdgeInsets.all(20),
+                child: Column(children: [
+                  _buildCursoRow('Recomendados para ti', 7),
+                  SizedBox(height: 50.0),
+                  _buildCursoRow('Nuevos', 7),
+                  SizedBox(height: 50.0),
+                  _buildCursoRow('Matemáticas', 7),
+                  SizedBox(height: 50.0),
+                  _buildCursoRow('Desarrollo de Software', 7),
+                ]),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -161,11 +163,13 @@ class _CursosScreenState extends State<CursosScreen> {
     );
   }
 
-  Widget header() {
+  Widget header(BuildContext context) {
+    double topMargin = MediaQuery.of(context).size.width > 600 ? 12 : 60;
+
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          padding: EdgeInsets.fromLTRB(16.0, topMargin, 16.0, 8.0),
           color: Color(0xFF13161c),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -227,7 +231,10 @@ class _CursosScreenState extends State<CursosScreen> {
                 decoration: InputDecoration(
                   suffixIcon: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Icon(Icons.search, color: Colors.grey,),
+                    child: Icon(
+                      Icons.search,
+                      color: Colors.grey,
+                    ),
                   ),
                   hintText: 'Buscar...',
                   hintStyle: TextStyle(color: Colors.white),
@@ -238,7 +245,9 @@ class _CursosScreenState extends State<CursosScreen> {
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color(0xFF7ff9cb),),
+                    borderSide: BorderSide(
+                      color: Color(0xFF7ff9cb),
+                    ),
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                 ),
@@ -252,7 +261,6 @@ class _CursosScreenState extends State<CursosScreen> {
             ),
           ),
           SizedBox(width: 10.0),
-          
         ],
       ),
     );

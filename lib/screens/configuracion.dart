@@ -6,74 +6,82 @@ class ConfiguracionScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color(0xFF13161c),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            header(),
-            SizedBox(height: 20),
-            CircleAvatar(
-              radius: 50,
-              
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Información del perfil',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.white
+        child: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              header(context),
+              SizedBox(height: 20),
+              CircleAvatar(
+                radius: 50,
               ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Nombre: Usuario Ejemplo',
-              style: TextStyle(fontSize: 16, color: Colors.white),
-              
-            ),
-            Text(
-              'Correo: usuario@example.com',
-              style: TextStyle(fontSize: 16, color: Colors.white),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Acción para editar perfil
-              },
-              child: Text('Editar',style: TextStyle(color: Colors.white),),
-            ),
-            SizedBox(height: 20),
-            Divider(color: Colors.white),
-            ListTile(
-              leading: Icon(Icons.language, color: Colors.white),
-              title: Text('Idioma', style: TextStyle(color: Colors.white),),
-              trailing: Icon(Icons.arrow_forward_ios),
-              onTap: () {
-                // Acción para cambiar idioma
-              },
-            ),
+              SizedBox(height: 20),
+              Text(
+                'Información del perfil',
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Nombre: Usuario Ejemplo',
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
+              Text(
+                'Correo: usuario@example.com',
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // Acción para editar perfil
+                },
+                child: Text(
+                  'Editar',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              SizedBox(height: 20),
+              Divider(color: Colors.white),
+              ListTile(
+                leading: Icon(Icons.language, color: Colors.white),
+                title: Text(
+                  'Idioma',
+                  style: TextStyle(color: Colors.white),
+                ),
+                trailing: Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  // Acción para cambiar idioma
+                },
+              ),
 
-            Divider(color: Colors.white),
-            ListTile(
-              leading: Icon(Icons.notifications, color: Colors.white),
-              title: Text('Notificaciones', style: TextStyle(color: Colors.white)),
-              trailing: Icon(Icons.arrow_forward_ios),
-              onTap: () {
-                // Acción para configurar notificaciones
-              },
-            ),
-            Divider(color: Colors.white),
-            // Añade más ListTile según tus opciones de configuración
-          ],
+              Divider(color: Colors.white),
+              ListTile(
+                leading: Icon(Icons.notifications, color: Colors.white),
+                title: Text('Notificaciones',
+                    style: TextStyle(color: Colors.white)),
+                trailing: Icon(Icons.arrow_forward_ios),
+                onTap: () {
+                  // Acción para configurar notificaciones
+                },
+              ),
+              Divider(color: Colors.white),
+              // Añade más ListTile según tus opciones de configuración
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget header() {
+  Widget header(BuildContext context) {
+    double topMargin = MediaQuery.of(context).size.width > 600 ? 12 : 60;
+
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          padding: EdgeInsets.fromLTRB(16.0, topMargin, 16.0, 8.0),
           color: Color(0xFF13161c),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -122,4 +130,3 @@ class ConfiguracionScreen extends StatelessWidget {
     );
   }
 }
-

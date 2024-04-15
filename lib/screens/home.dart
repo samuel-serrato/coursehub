@@ -5,13 +5,15 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF13161c),
-      body: Column(
-        children: [
-          header(),
-          Expanded(
-            child: content(context),
-          ),
-        ],
+      body: Container(
+        child: Column(
+          children: [
+            header(context),
+            Expanded(
+              child: content(context),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -148,11 +150,13 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget header() {
+  Widget header(BuildContext context) {
+    double topMargin = MediaQuery.of(context).size.width > 600 ? 12 : 60;
+
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          padding: EdgeInsets.fromLTRB(16.0, topMargin, 16.0, 8.0),
           color: Color(0xFF13161c),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

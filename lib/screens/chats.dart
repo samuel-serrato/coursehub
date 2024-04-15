@@ -47,7 +47,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
             // Vista de escritorio
             return Column(
               children: [
-                header(),
+                header(context),
                 Expanded(
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -75,8 +75,9 @@ class _ChatsScreenState extends State<ChatsScreen> {
             // Vista móvil
             return Column(
               children: [
-                header(),
-                Expanded(child: selectedChat != null ? content() : chatList()),
+                header(context),
+                Expanded(
+                    child: selectedChat != null ? content() : chatList()),
               ],
             );
           }
@@ -112,67 +113,66 @@ class _ChatsScreenState extends State<ChatsScreen> {
             ),
           ],
         ),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  
-                ),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: ListView.builder(
-                        reverse: true, // Invierte el orden de los mensajes
-                        itemCount: selectedChat!.messages.length,
-                        itemBuilder: (context, index) {
-                          final message = selectedChat!.messages[index];
-                          return Container(
-                            alignment: message.sender == 'Yo'
-                                ? Alignment.centerRight
-                                : Alignment.centerLeft,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 8.0, horizontal: 16.0),
-                                decoration: BoxDecoration(
-                                  color: message.sender == 'Yo'
-                                      ? Color.fromARGB(255, 90, 223, 172)
-                                      : Colors.grey,
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                child: Text(
-                                  message.text,
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(),
+            child: Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    reverse: true, // Invierte el orden de los mensajes
+                    itemCount: selectedChat!.messages.length,
+                    itemBuilder: (context, index) {
+                      final message = selectedChat!.messages[index];
+                      return Container(
+                        alignment: message.sender == 'Yo'
+                            ? Alignment.centerRight
+                            : Alignment.centerLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 16.0),
+                            decoration: BoxDecoration(
+                              color: message.sender == 'Yo'
+                                  ? Color.fromARGB(255, 90, 223, 172)
+                                  : Colors.grey,
+                              borderRadius: BorderRadius.circular(8.0),
                             ),
-                          );
-                        },
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    messageInput(),
-                  ],
+                            child: Text(
+                              message.text,
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
+                SizedBox(height: 10),
+                messageInput(),
+              ],
             ),
-          ],
-        );
+          ),
+        ),
+      ],
+    );
   }
 
   Widget chatList() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 12),
       decoration: BoxDecoration(
-      border: Border(
-        right: BorderSide(color: Colors.white), // Agrega un borde a la derecha
+        border: Border(
+          right:
+              BorderSide(color: Colors.white), // Agrega un borde a la derecha
+        ),
       ),
-    ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            margin: EdgeInsets.symmetric(vertical: 20),
+            margin: EdgeInsets.only(top: 20),
             child: Text(
               'Chats',
               style: TextStyle(
@@ -274,11 +274,13 @@ class _ChatsScreenState extends State<ChatsScreen> {
     }
   }
 
-  Widget header() {
+  Widget header(BuildContext context) {
+    double topMargin = MediaQuery.of(context).size.width > 600 ? 12 : 60;
+
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          padding: EdgeInsets.fromLTRB(16.0, topMargin, 16.0, 8.0),
           color: Color(0xFF13161c),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
