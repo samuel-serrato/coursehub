@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 
-class CursosScreen extends StatelessWidget {
+class CursosScreen extends StatefulWidget {
+  @override
+  State<CursosScreen> createState() => _CursosScreenState();
+}
+
+class _CursosScreenState extends State<CursosScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchText = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,19 +21,18 @@ class CursosScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             header(),
+            search(),
             Container(
               padding: EdgeInsets.all(20),
-              child: Column(
-                children: [
-              _buildCursoRow('Recomendados para ti', 7),
-              SizedBox(height: 50.0),
-              _buildCursoRow('Nuevos', 7),
-              SizedBox(height: 50.0),
-              _buildCursoRow('Matemáticas', 7),
-              SizedBox(height: 50.0),
-              _buildCursoRow('Desarrollo de Software', 7),
-                ]
-              ),
+              child: Column(children: [
+                _buildCursoRow('Recomendados para ti', 7),
+                SizedBox(height: 50.0),
+                _buildCursoRow('Nuevos', 7),
+                SizedBox(height: 50.0),
+                _buildCursoRow('Matemáticas', 7),
+                SizedBox(height: 50.0),
+                _buildCursoRow('Desarrollo de Software', 7),
+              ]),
             ),
           ],
         ),
@@ -95,7 +102,10 @@ class CursosScreen extends StatelessWidget {
                   color: const Color.fromARGB(221, 46, 46, 46),
                 ),
                 child: IconButton(
-                  icon: Icon(Icons.arrow_forward, color: Colors.white,),
+                  icon: Icon(
+                    Icons.arrow_forward,
+                    color: Colors.white,
+                  ),
                   onPressed: () {
                     _scroll(true); // Scroll hacia la derecha
                   },
@@ -150,49 +160,99 @@ class CursosScreen extends StatelessWidget {
       ),
     );
   }
+
   Widget header() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      color: Color(0xFF13161c),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'CourseHub',
-            style: TextStyle(
-              color: Color(0xFF7ff9cb),
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.all(10.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20.0),
-              border: Border.all(color: Colors.black),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.person, color: Colors.black),
-                SizedBox(width: 10.0),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          color: Color(0xFF13161c),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'CourseHub',
+                style: TextStyle(
+                  color: Color(0xFF7ff9cb),
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.all(10.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20.0),
+                  border: Border.all(color: Colors.black),
+                ),
+                child: Row(
                   children: [
-                    Text(
-                      'Nombre del usuario Completo',
-                      style: TextStyle(fontSize: 12, color: Colors.black),
-                    ),
-                    Text(
-                      'Tipo de usuario',
-                      style: TextStyle(fontSize: 12, color: Colors.black),
+                    Icon(Icons.person, color: Colors.black),
+                    SizedBox(width: 10.0),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Nombre de usuario',
+                          style: TextStyle(fontSize: 12, color: Colors.black),
+                        ),
+                        Text(
+                          'Tipo de usuario',
+                          style: TextStyle(fontSize: 12, color: Colors.black),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
+              ),
+            ],
+          ),
+        ),
+        Divider(color: Colors.white),
+      ],
+    );
+  }
+
+  Widget search() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  suffixIcon: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Icon(Icons.search, color: Colors.grey,),
+                  ),
+                  hintText: 'Buscar...',
+                  hintStyle: TextStyle(color: Colors.white),
+                  fillColor: Color(0xFF13161c),
+                  filled: true,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(0xFF7ff9cb),),
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                ),
+                style: TextStyle(color: Colors.white),
+                onChanged: (value) {
+                  setState(() {
+                    _searchText = value;
+                  });
+                },
+              ),
             ),
           ),
+          SizedBox(width: 10.0),
+          
         ],
       ),
     );

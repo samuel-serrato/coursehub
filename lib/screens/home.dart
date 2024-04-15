@@ -19,15 +19,15 @@ class HomeScreen extends StatelessWidget {
   Widget content(BuildContext context) {
     return Row(
       children: [
-        VerticalDivider(thickness: 1, width: 1),
+        //VerticalDivider(thickness: 1, width: 1),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                filaBienvenida(),
-                SizedBox(height: 20),
+         /*        filaBienvenida(),
+                SizedBox(height: 20), */
                 cursosActivos(),
                 SizedBox(height: 20),
                 cursosCompletados(),
@@ -64,72 +64,84 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget cursosActivos() {
-    return Container(
-      padding: EdgeInsets.all(16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                'Cursos Activos:',
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              ),
-              SizedBox(height: 10),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    CourseItem(
-                      courseName: 'Matemáticas Avanzadas',
-                      tutorName: 'Tutor: Juan Pérez',
-                      schedule: 'Martes 10:00 - 12:00',
-                    ),
-                    CourseItem(
-                      courseName: 'Programación en Python',
-                      tutorName: 'Tutor: María Gómez',
-                      schedule: 'Miércoles 14:00 - 16:00',
-                    ), // Agrega más cursos según sea necesario ],
-                  ],
-                ),
-              ),
-            ],
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 16),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Cursos Activos:',
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
-        ],
-      ),
-    );
-  }
+        ),
+        SizedBox(height: 10),
+        Container(
+          height: 200, // Establece una altura para limitar la altura del ListView
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 2, // Ajusta esto al número total de cursos activos
+            itemBuilder: (BuildContext context, int index) {
+              return Padding(
+                padding: EdgeInsets.only(right: 16.0),
+                child: CourseItem(
+                  courseName: index == 0 ? 'Matemáticas Avanzadas' : 'Programación en Python',
+                  tutorName: index == 0 ? 'Tutor: Juan Pérez' : 'Tutor: María Gómez',
+                  schedule: index == 0 ? 'Martes 10:00 - 12:00' : 'Miércoles 14:00 - 16:00',
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 
   Widget cursosCompletados() {
     return Expanded(
       child: Container(
         padding: EdgeInsets.all(16.0),
-        child: ListView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Cursos Completados:',
               style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white),
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
             SizedBox(height: 10),
-            CourseItem(
-              courseName: 'Introducción a la Física',
-              tutorName: 'Tutor: Ana Martínez',
-              schedule: 'Completado el 20/03/2024',
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                child: ListView.builder(
+                  itemCount:
+                      5, // Aquí coloca el número total de cursos completados
+                  itemBuilder: (BuildContext context, int index) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          child: CourseItem(
+                            courseName: 'Introducción a la Física',
+                            tutorName: 'Tutor: Ana Martínez',
+                            schedule: 'Completado el 20/03/2024',
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                      ],
+                    );
+                  },
+                ),
+              ),
             ),
-            SizedBox(height: 10),
-            CourseItem(
-              courseName: 'Historia del Arte',
-              tutorName: 'Tutor: Carlos Sánchez',
-              schedule: 'Completado el 15/03/2024',
-            ),
-            // Agrega más cursos completados según sea necesario
           ],
         ),
       ),
@@ -137,50 +149,55 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget header() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      color: Color(0xFF13161c),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            'CourseHub',
-            style: TextStyle(
-              color: Color(0xFF7ff9cb),
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.all(10.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20.0),
-              border: Border.all(color: Colors.black),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.person, color: Colors.black),
-                SizedBox(width: 10.0),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      children: [
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          color: Color(0xFF13161c),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'CourseHub',
+                style: TextStyle(
+                  color: Color(0xFF7ff9cb),
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.all(10.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20.0),
+                  border: Border.all(color: Colors.black),
+                ),
+                child: Row(
                   children: [
-                    Text(
-                      'Nombre del usuario Completo',
-                      style: TextStyle(fontSize: 12, color: Colors.black),
-                    ),
-                    Text(
-                      'Tipo de usuario',
-                      style: TextStyle(fontSize: 12, color: Colors.black),
+                    Icon(Icons.person, color: Colors.black),
+                    SizedBox(width: 10.0),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Nombre de usuario',
+                          style: TextStyle(fontSize: 12, color: Colors.black),
+                        ),
+                        Text(
+                          'Tipo de usuario',
+                          style: TextStyle(fontSize: 12, color: Colors.black),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+        Divider(color: Colors.white),
+      ],
     );
   }
 }
