@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
 class CursosScreen extends StatefulWidget {
+  final String nombre; // Nuevo
+  final String tipoUsuario; // Nuevo
+
   @override
   State<CursosScreen> createState() => _CursosScreenState();
+
+  CursosScreen({required this.nombre, required this.tipoUsuario});
 }
 
 class _CursosScreenState extends State<CursosScreen> {
@@ -198,11 +203,11 @@ class _CursosScreenState extends State<CursosScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Nombre de usuario',
+                          widget.nombre,
                           style: TextStyle(fontSize: 12, color: Colors.black),
                         ),
                         Text(
-                          'Tipo de usuario',
+                          widget.tipoUsuario,
                           style: TextStyle(fontSize: 12, color: Colors.black),
                         ),
                       ],
@@ -267,8 +272,8 @@ class _CursosScreenState extends State<CursosScreen> {
   }
 }
 
-void main() {
+/* void main() {
   runApp(MaterialApp(
     home: CursosScreen(),
   ));
-}
+} */

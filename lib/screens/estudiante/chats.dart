@@ -17,8 +17,13 @@ class Chat {
 }
 
 class ChatsScreen extends StatefulWidget {
+  final String nombre; // Nuevo
+  final String tipoUsuario; // Nuevo
+
   @override
   _ChatsScreenState createState() => _ChatsScreenState();
+
+  ChatsScreen({required this.nombre, required this.tipoUsuario});
 }
 
 class _ChatsScreenState extends State<ChatsScreen> {
@@ -76,8 +81,7 @@ class _ChatsScreenState extends State<ChatsScreen> {
             return Column(
               children: [
                 header(context),
-                Expanded(
-                    child: selectedChat != null ? content() : chatList()),
+                Expanded(child: selectedChat != null ? content() : chatList()),
               ],
             );
           }
@@ -309,11 +313,11 @@ class _ChatsScreenState extends State<ChatsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Nombre de usuario',
+                          widget.nombre,
                           style: TextStyle(fontSize: 12, color: Colors.black),
                         ),
                         Text(
-                          'Tipo de usuario',
+                          widget.tipoUsuario,
                           style: TextStyle(fontSize: 12, color: Colors.black),
                         ),
                       ],
@@ -330,8 +334,9 @@ class _ChatsScreenState extends State<ChatsScreen> {
   }
 }
 
-void main() {
+/* void main() {
   runApp(MaterialApp(
     home: ChatsScreen(),
   ));
 }
+ */

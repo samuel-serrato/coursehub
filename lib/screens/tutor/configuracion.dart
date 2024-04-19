@@ -1,6 +1,58 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-class ConfiguracionScreen extends StatelessWidget {
+class ConfiguracionScreen extends StatefulWidget {
+  final String nombre;
+  final String tipoUsuario;
+  final int idUsuario; // Agregamos el ID del usuario aquí
+
+  ConfiguracionScreen({
+    required this.nombre,
+    required this.tipoUsuario,
+    required this.idUsuario,
+  });
+
+  @override
+  State<ConfiguracionScreen> createState() => _ConfiguracionScreenState();
+}
+
+class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
+  String? _correo = '';
+  String? _apellidos = '';
+  String? _telefono = '';
+  String? _descripcion = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _cargarInformacionUsuario();
+  }
+
+  Future<void> _cargarInformacionUsuario() async {
+    final url = Uri.parse('https://localhost:44339/api/datosusuario');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> datosUsuarios = jsonDecode(response.body);
+
+      // Buscar el usuario actual por su ID_USUARIO
+      final usuarioActual = datosUsuarios.firstWhere(
+        (usuario) => usuario['ID_USUARIO'] == widget.idUsuario,
+        orElse: () => null,
+      );
+
+      if (usuarioActual != null) {
+        setState(() {
+          _apellidos = usuarioActual['APELLIDOS'];
+          _correo = usuarioActual['EMAIL'];
+          _telefono = usuarioActual['TELEFONO'];
+          _descripcion = usuarioActual['DESCRIPCION'];
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -8,38 +60,79 @@ class ConfiguracionScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Container(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              // Resto del código de la pantalla de configuración
               header(context),
-              SizedBox(height: 20),
-              CircleAvatar(
-                radius: 50,
-              ),
-              SizedBox(height: 20),
-              Text(
-                'Información del perfil',
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              ),
-              SizedBox(height: 10),
-              Text(
-                'Nombre: Usuario Ejemplo',
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
-              Text(
-                'Correo: usuario@example.com',
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  // Acción para editar perfil
-                },
-                child: Text(
-                  'Editar',
-                  style: TextStyle(color: Colors.white),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(height: 20),
+                          Text(
+                            'Información del perfil',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          CircleAvatar(
+                            radius: 50,
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            'Nombre: ${widget.nombre}  ${_apellidos}',
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            'Tipo de Usuario: ${widget.tipoUsuario}',
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 20),
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(height: 20),
+                          Text(
+                            'Correo: ${_correo ?? "Cargando..."}',
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                          Text(
+                            'Teléfono: ${_telefono ?? "Cargando..."}',
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                          Text(
+                            'Descripción: ${_descripcion ?? "Cargando..."}',
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                          SizedBox(height: 20),
+                          ElevatedButton(
+                            onPressed: () {
+                              // Acción para editar perfil
+                            },
+                            child: Text(
+                              'Editar',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
               SizedBox(height: 20),
@@ -110,11 +203,11 @@ class ConfiguracionScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Nombre de usuario',
+                          widget.nombre,
                           style: TextStyle(fontSize: 12, color: Colors.black),
                         ),
                         Text(
-                          'Tipo de usuario',
+                          widget.tipoUsuario,
                           style: TextStyle(fontSize: 12, color: Colors.black),
                         ),
                       ],

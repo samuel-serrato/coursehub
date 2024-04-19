@@ -5,18 +5,31 @@ import 'package:coursehub/screens/estudiante/homeEstudiante.dart';
 import 'package:flutter/material.dart';
 
 class NavigationRailEScreen extends StatefulWidget {
+  final String nombre; // Nuevo
+  final String tipoUsuario; // Nuevo
+  final int idUsuario; // Agregamos el ID del usuario aquí
+
   @override
   _NavigationRailEScreenState createState() => _NavigationRailEScreenState();
+
+  NavigationRailEScreen(
+      {required this.nombre,
+      required this.tipoUsuario,
+      required this.idUsuario});
 }
 
 class _NavigationRailEScreenState extends State<NavigationRailEScreen> {
   int _selectedIndex = 0;
 
-  List<Widget> _widgetOptions = <Widget>[
-    HomeScreen(),
-    CursosScreen(),
-    ChatsScreen(),
-    ConfiguracionScreen()
+  late List<Widget> _widgetOptions = <Widget>[
+    HomeScreen(nombre: widget.nombre, tipoUsuario: widget.tipoUsuario),
+    CursosScreen(nombre: widget.nombre, tipoUsuario: widget.tipoUsuario),
+    ChatsScreen(nombre: widget.nombre, tipoUsuario: widget.tipoUsuario),
+    ConfiguracionScreen(
+      nombre: widget.nombre,
+      tipoUsuario: widget.tipoUsuario,
+      idUsuario: widget.idUsuario,
+    )
   ];
 
   @override

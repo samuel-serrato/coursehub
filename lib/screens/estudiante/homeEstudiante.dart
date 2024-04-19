@@ -1,6 +1,16 @@
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  final String nombre;
+  final String tipoUsuario; // Nuevo
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+
+  HomeScreen({required this.nombre, required this.tipoUsuario});
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +38,7 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-         /*        filaBienvenida(),
+                /*        filaBienvenida(),
                 SizedBox(height: 20), */
                 cursosActivos(),
                 SizedBox(height: 20),
@@ -66,42 +76,47 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget cursosActivos() {
-  return Container(
-    padding: EdgeInsets.symmetric(horizontal: 16),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Cursos Activos:',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Cursos Activos:',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
-        ),
-        SizedBox(height: 10),
-        Container(
-          height: 200, // Establece una altura para limitar la altura del ListView
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: 2, // Ajusta esto al número total de cursos activos
-            itemBuilder: (BuildContext context, int index) {
-              return Padding(
-                padding: EdgeInsets.only(right: 16.0),
-                child: CourseItem(
-                  courseName: index == 0 ? 'Matemáticas Avanzadas' : 'Programación en Python',
-                  tutorName: index == 0 ? 'Tutor: Juan Pérez' : 'Tutor: María Gómez',
-                  schedule: index == 0 ? 'Martes 10:00 - 12:00' : 'Miércoles 14:00 - 16:00',
-                ),
-              );
-            },
+          SizedBox(height: 10),
+          Container(
+            height:
+                200, // Establece una altura para limitar la altura del ListView
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 2, // Ajusta esto al número total de cursos activos
+              itemBuilder: (BuildContext context, int index) {
+                return Padding(
+                  padding: EdgeInsets.only(right: 16.0),
+                  child: CourseItem(
+                    courseName: index == 0
+                        ? 'Matemáticas Avanzadas'
+                        : 'Programación en Python',
+                    tutorName:
+                        index == 0 ? 'Tutor: Juan Pérez' : 'Tutor: María Gómez',
+                    schedule: index == 0
+                        ? 'Martes 10:00 - 12:00'
+                        : 'Miércoles 14:00 - 16:00',
+                  ),
+                );
+              },
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-}
-
+        ],
+      ),
+    );
+  }
 
   Widget cursosCompletados() {
     return Expanded(
@@ -185,11 +200,11 @@ class HomeScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Nombre de usuario',
+                          widget.nombre,
                           style: TextStyle(fontSize: 12, color: Colors.black),
                         ),
                         Text(
-                          'Tipo de usuario',
+                          widget.tipoUsuario,
                           style: TextStyle(fontSize: 12, color: Colors.black),
                         ),
                       ],
