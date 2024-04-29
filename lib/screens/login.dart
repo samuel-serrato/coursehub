@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:coursehub/screens/registroUsuario.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:coursehub/screens/estudiante/homeEstudiante.dart';
@@ -27,12 +28,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget content() {
     return Container(
-      color: Color(0xFF001D82),
+      color: Color(0xFF13161c),
       child: Center(
         child: Container(
+          decoration: BoxDecoration(
+              color: Color(0xFF7ff9cb),
+              borderRadius: BorderRadius.circular(20)),
           width: 500,
-          height: 500,
-          color: Colors.white,
+          height: 550,
           padding: EdgeInsets.all(20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -44,6 +47,8 @@ class _LoginScreenState extends State<LoginScreen> {
               TextFormField(
                 controller: _usernameController,
                 decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
                   labelText: 'Usuario',
                   border: OutlineInputBorder(),
                 ),
@@ -53,6 +58,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
                   labelText: 'Contraseña',
                   border: OutlineInputBorder(),
                 ),
@@ -71,6 +78,23 @@ class _LoginScreenState extends State<LoginScreen> {
                           'Iniciar sesión',
                           style: TextStyle(fontSize: 18),
                         ),
+                ),
+              ),
+              SizedBox(height: 10),
+              // Agrega el nuevo botón para registrar
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RegistroUsuario()),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Text(
+                    '¿No tienes cuenta?, Registrate aquí',
+                    style: TextStyle(fontSize: 18, color: Colors.black),
+                  ),
                 ),
               ),
               SizedBox(height: 10),

@@ -57,118 +57,234 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF13161c),
-      body: SingleChildScrollView(
-        child: Container(
-          child: Column(
-            children: [
-              // Resto del código de la pantalla de configuración
-              header(context),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(height: 20),
-                          Text(
-                            'Información del perfil',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          CircleAvatar(
-                            radius: 50,
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            'Nombre: ${widget.nombre}  ${_apellidos}',
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            'Tipo de Usuario: ${widget.tipoUsuario}',
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(width: 20),
-                    Expanded(
-                      flex: 2,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(height: 20),
-                          Text(
-                            'Correo: ${_correo ?? "Cargando..."}',
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                          Text(
-                            'Teléfono: ${_telefono ?? "Cargando..."}',
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                          Text(
-                            'Descripción: ${_descripcion ?? "Cargando..."}',
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                          SizedBox(height: 20),
-                          ElevatedButton(
-                            onPressed: () {
-                              // Acción para editar perfil
-                            },
-                            child: Text(
-                              'Editar',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20),
-              Divider(color: Colors.white),
-              ListTile(
-                leading: Icon(Icons.language, color: Colors.white),
-                title: Text(
-                  'Idioma',
-                  style: TextStyle(color: Colors.white),
-                ),
-                trailing: Icon(Icons.arrow_forward_ios),
-                onTap: () {
-                  // Acción para cambiar idioma
-                },
-              ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth > 600) {
+            // Escritorio
+            return _buildDesktopLayout();
+          } else {
+            // Móvil
+            return _buildMobileLayout();
+          }
+        },
+      ),
+    );
+  }
 
-              Divider(color: Colors.white),
-              ListTile(
-                leading: Icon(Icons.notifications, color: Colors.white),
-                title: Text('Notificaciones',
-                    style: TextStyle(color: Colors.white)),
-                trailing: Icon(Icons.arrow_forward_ios),
-                onTap: () {
-                  // Acción para configurar notificaciones
-                },
+  Widget _buildDesktopLayout() {
+    return SingleChildScrollView(
+      child: Container(
+        child: Column(
+          children: [
+            // Resto del código de la pantalla de configuración
+            _buildHeader(context),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(height: 20),
+                        Text(
+                          'Información del perfil',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        CircleAvatar(
+                          backgroundColor: Color(0xFF7ff9cb),
+                          radius: 50,
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          'Nombre: ${widget.nombre}  ${_apellidos}',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          'Tipo de Usuario: ${widget.tipoUsuario}',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 20),
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(height: 20),
+                        Text(
+                          'Correo: ${_correo ?? "Cargando..."}',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                        Text(
+                          'Teléfono: ${_telefono ?? "Cargando..."}',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                        Text(
+                          'Descripción: ${_descripcion ?? "Cargando..."}',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                        SizedBox(height: 20),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(
+                                0xFF7ff9cb), // Cambia este color por el que desees
+                          ),
+                          onPressed: () {
+                            // Acción para editar perfil
+                          },
+                          child: Text(
+                            'Editar',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              Divider(color: Colors.white),
-              // Añade más ListTile según tus opciones de configuración
-            ],
-          ),
+            ),
+            SizedBox(height: 20),
+            Divider(color: Colors.white),
+            ListTile(
+              leading: Icon(Icons.language, color: Colors.white),
+              title: Text(
+                'Idioma',
+                style: TextStyle(color: Colors.white),
+              ),
+              trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                // Acción para cambiar idioma
+              },
+            ),
+
+            Divider(color: Colors.white),
+            ListTile(
+              leading: Icon(Icons.notifications, color: Colors.white),
+              title:
+                  Text('Notificaciones', style: TextStyle(color: Colors.white)),
+              trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                // Acción para configurar notificaciones
+              },
+            ),
+            Divider(color: Colors.white),
+            // Añade más ListTile según tus opciones de configuración
+          ],
         ),
       ),
     );
   }
 
-  Widget header(BuildContext context) {
+  Widget _buildMobileLayout() {
+    return SingleChildScrollView(
+      child: Container(
+        child: Column(
+          children: [
+            // Resto del código de la pantalla de configuración
+            _buildHeader(context),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: 20),
+                  Text(
+                    'Información del perfil',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  CircleAvatar(
+                    backgroundColor: Color(0xFF7ff9cb),
+                    radius: 50,
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'Nombre: ${widget.nombre}  ${_apellidos}',
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'Tipo de Usuario: ${widget.tipoUsuario}',
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'Correo: ${_correo ?? "Cargando..."}',
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                  Text(
+                    'Teléfono: ${_telefono ?? "Cargando..."}',
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                  Text(
+                    'Descripción: ${_descripcion ?? "Cargando..."}',
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(
+                          0xFF7ff9cb), // Cambia este color por el que desees
+                    ),
+                    onPressed: () {
+                      // Acción para editar perfil
+                    },
+                    child: Text(
+                      'Editar',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 20),
+            Divider(color: Colors.white),
+            ListTile(
+              leading: Icon(Icons.language, color: Colors.white),
+              title: Text(
+                'Idioma',
+                style: TextStyle(color: Colors.white),
+              ),
+              trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                // Acción para cambiar idioma
+              },
+            ),
+
+            Divider(color: Colors.white),
+            ListTile(
+              leading: Icon(Icons.notifications, color: Colors.white),
+              title:
+                  Text('Notificaciones', style: TextStyle(color: Colors.white)),
+              trailing: Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                // Acción para configurar notificaciones
+              },
+            ),
+            Divider(color: Colors.white),
+            // Añade más ListTile según tus opciones de configuración
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
     double topMargin = MediaQuery.of(context).size.width > 600 ? 12 : 60;
 
     return Column(

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   final String nombre;
@@ -11,6 +13,27 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<Map<String, dynamic>> asignaturas = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Llamar a la función para obtener las tutorías del servidor
+    fetchTutorias();
+  }
+
+  Future<void> fetchTutorias() async {
+    final response =
+        await http.get(Uri.parse('https://localhost:44339/api/tutorias'));
+    if (response.statusCode == 200) {
+      setState(() {
+        asignaturas = json.decode(response.body).cast<Map<String, dynamic>>();
+      });
+    } else {
+      throw Exception('Failed to load tutorias');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,40 +61,14 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /*        filaBienvenida(),
-                SizedBox(height: 20), */
                 solicitudDeTutorias(),
                 SizedBox(height: 20),
-                tutoriasPasadas(),
+                misTutorias(),
               ],
             ),
           ),
         ),
       ],
-    );
-  }
-
-  Widget filaBienvenida() {
-    return Container(
-      //color: Color(0xFFEFF5FD),
-      padding: EdgeInsets.all(16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(
-                '¡Bienvenido al sistema!',
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 
@@ -82,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Solicitudes de Tutorías',
+            'Solicitud de Tutorías',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -91,11 +88,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SizedBox(height: 10),
           Container(
-            height:
-                200, // Establece una altura para limitar la altura del ListView
+            height: 200,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: 2, // Ajusta esto al número total de cursos activos
+              itemCount: 2,
               itemBuilder: (BuildContext context, int index) {
                 return Padding(
                   padding: EdgeInsets.only(right: 16.0),
@@ -118,7 +114,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget tutoriasPasadas() {
+  Widget misTutorias() {
+    List<Map<String, dynamic>> misAsignaturas =
+        asignaturas.where((asignatura) => asignatura['ID_TUTOR'] == 2).toList();
     return Expanded(
       child: Container(
         padding: EdgeInsets.all(16.0),
@@ -126,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Tutorías Pasadas',
+              'Mis Asignaturas',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -138,8 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Container(
                 width: double.infinity,
                 child: ListView.builder(
-                  itemCount:
-                      5, // Aquí coloca el número total de cursos completados
+                  itemCount: misAsignaturas.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,9 +144,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         Container(
                           width: double.infinity,
                           child: CourseItem(
-                            courseName: 'Introducción a la Física',
-                            tutorName: 'Tutor: Juan Pérez',
-                            schedule: 'Completado el 20/03/2024',
+                            courseName: misAsignaturas[index]['MATERIA'],
+                            tutorName:
+                                'Tutor: Juan Pérez', // O puedes obtener el nombre del tutor de la lista si está disponible
+                            schedule:
+                                'Creada el ${misAsignaturas[index]['FECHA_CREACION']}',
                           ),
                         ),
                         SizedBox(height: 10),
