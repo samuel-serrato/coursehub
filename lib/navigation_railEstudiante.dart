@@ -22,7 +22,7 @@ class _NavigationRailEScreenState extends State<NavigationRailEScreen> {
   int _selectedIndex = 0;
 
   late List<Widget> _widgetOptions = <Widget>[
-    HomeScreen(nombre: widget.nombre, tipoUsuario: widget.tipoUsuario),
+    HomeScreen(nombre: widget.nombre, tipoUsuario: widget.tipoUsuario, idUsuario: widget.idUsuario,),
     CursosScreen(nombre: widget.nombre, tipoUsuario: widget.tipoUsuario),
     ChatsScreen(nombre: widget.nombre, tipoUsuario: widget.tipoUsuario),
     ConfiguracionScreen(

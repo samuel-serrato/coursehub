@@ -99,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 solicitudDeTutorias(),
                 SizedBox(height: 20),
-                misTutorias(),
+                Expanded(child: misAsignaturas()),
               ],
             ),
           ),
@@ -129,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget misTutorias() {
+  Widget misAsignaturas() {
     return Container(
       padding: EdgeInsets.all(16.0),
       child: Column(
@@ -144,9 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           SizedBox(height: 10),
-          Container(
-            height:
-                300, // Altura predeterminada para evitar conflictos de desplazamiento
+          Expanded(
             child: ListView.builder(
               itemCount: tutorias.length,
               itemBuilder: (BuildContext context, int index) {

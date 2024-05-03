@@ -1,16 +1,75 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   final String nombre;
   final String tipoUsuario; // Nuevo
+  final int idUsuario;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 
-  HomeScreen({required this.nombre, required this.tipoUsuario});
+  HomeScreen(
+      {required this.nombre,
+      required this.tipoUsuario,
+      required this.idUsuario});
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<Map<String, dynamic>> tutorias = [];
+  Map<int, Map<String, dynamic>> usuarios =
+      {}; // Almacena el nombre y apellido del usuario por ID
+
+  @override
+  void initState() {
+    super.initState();
+    fetchTutorias();
+    fetchDatosUsuario();
+  }
+
+  Future<void> fetchTutorias() async {
+    final response =
+        await http.get(Uri.parse('https://localhost:44339/api/tutorias'));
+    if (response.statusCode == 200) {
+      setState(() {
+        tutorias = json.decode(response.body).cast<Map<String, dynamic>>();
+        tutorias = tutorias
+            .where((tutoria) =>
+                tutoria['ID_ALUMNO1'] == widget.idUsuario ||
+                tutoria['ID_ALUMNO2'] == widget.idUsuario ||
+                tutoria['ID_ALUMNO3'] == widget.idUsuario)
+            .toList();
+      });
+    } else {
+      throw Exception('Failed to load tutorias');
+    }
+  }
+
+  Future<void> fetchDatosUsuario() async {
+    final response =
+        await http.get(Uri.parse('https://localhost:44339/api/datosusuario'));
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      setState(() {
+        usuarios = Map.fromIterable(data,
+            key: (e) => e['ID_USUARIO'],
+            value: (e) => {
+                  'NOMBRE': e['NOMBRE'],
+                  'APELLIDOS': e['APELLIDOS'],
+                });
+      });
+    } else {
+      throw Exception('Failed to load datosusuario');
+    }
+  }
+
+  String buscarNombreDeUsuario(int id) {
+    return usuarios[id] != null
+        ? '${usuarios[id]!['NOMBRE']} ${usuarios[id]!['APELLIDOS']}' // Concatenar nombre y apellido
+        : 'Desconocido';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,23 +150,21 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SizedBox(height: 10),
           Container(
-            height:
-                200, // Establece una altura para limitar la altura del ListView
+            height: 200,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: 2, // Ajusta esto al número total de cursos activos
+              itemCount: tutorias.length,
               itemBuilder: (BuildContext context, int index) {
+                final tutoria = tutorias[index];
+                final String horario = getHorario(
+                    tutoria); // Obtener el horario correspondiente al alumno
                 return Padding(
                   padding: EdgeInsets.only(right: 16.0),
                   child: CourseItem(
-                    courseName: index == 0
-                        ? 'Matemáticas Avanzadas'
-                        : 'Programación en Python',
+                    courseName: tutoria['MATERIA'] ?? 'Sin materia',
                     tutorName:
-                        index == 0 ? 'Tutor: Juan Pérez' : 'Tutor: María Gómez',
-                    schedule: index == 0
-                        ? 'Martes 10:00 - 12:00'
-                        : 'Miércoles 14:00 - 16:00',
+                        'Tutor: ${buscarNombreDeUsuario(tutoria['ID_TUTOR'])}',
+                    schedule: horario,
                   ),
                 );
               },
@@ -116,6 +173,18 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
+  }
+
+  String getHorario(Map<String, dynamic> tutoria) {
+    final int idUsuario = widget.idUsuario;
+    if (tutoria['ID_ALUMNO1'] == idUsuario) {
+      return tutoria['HORARIO1'];
+    } else if (tutoria['ID_ALUMNO2'] == idUsuario) {
+      return tutoria['HORARIO2'];
+    } else if (tutoria['ID_ALUMNO3'] == idUsuario) {
+      return tutoria['HORARIO3'];
+    }
+    return 'Horario no disponible';
   }
 
   Widget cursosCompletados() {
@@ -144,14 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          width: double.infinity,
-                          child: CourseItem(
-                            courseName: 'Introducción a la Física',
-                            tutorName: 'Tutor: Ana Martínez',
-                            schedule: 'Completado el 20/03/2024',
-                          ),
-                        ),
+                        Container(),
                         SizedBox(height: 10),
                       ],
                     );
@@ -224,12 +286,12 @@ class _HomeScreenState extends State<HomeScreen> {
 class CourseItem extends StatelessWidget {
   final String courseName;
   final String tutorName;
-  final String schedule;
+  final String schedule; // Cambiado a schedule en lugar de schedules
 
   const CourseItem({
     required this.courseName,
     required this.tutorName,
-    required this.schedule,
+    required this.schedule, // Cambiado a schedule en lugar de schedules
   });
 
   @override
@@ -262,6 +324,7 @@ class CourseItem extends StatelessWidget {
           ),
           SizedBox(height: 8),
           Text(
+            // Cambiado para mostrar el horario
             schedule,
             style: TextStyle(
               color: Color(0xFF13161c),

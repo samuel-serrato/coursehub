@@ -43,6 +43,14 @@ class _LoginScreenState extends State<LoginScreen> {
               FlutterLogo(
                 size: 150,
               ),
+              /* Text(
+                'COURSEHUB',
+                style: TextStyle(
+                  color: Color(0xFF13161c),
+                  fontSize: 50.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ), */
               SizedBox(height: 50),
               TextFormField(
                 controller: _usernameController,
