@@ -4,34 +4,71 @@ import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   final String nombre;
-  final String tipoUsuario; // Nuevo
+  final String tipoUsuario;
+  final int idUsuario;
+
+  const HomeScreen({
+    Key? key,
+    required this.nombre,
+    required this.tipoUsuario,
+    required this.idUsuario,
+  }) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
-
-  HomeScreen({required this.nombre, required this.tipoUsuario});
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Map<String, dynamic>> asignaturas = [];
+  List<Map<String, dynamic>> tutorias = [];
+  Map<int, Map<String, dynamic>> usuarios =
+      {}; // Almacena el nombre y apellido del usuario por ID
 
   @override
   void initState() {
     super.initState();
-    // Llamar a la función para obtener las tutorías del servidor
-    fetchTutorias();
+    fetchTutorias(
+        widget.idUsuario); // No es necesario pasar el ID del usuario aquí
+    fetchDatosUsuario();
   }
 
-  Future<void> fetchTutorias() async {
+  Future<void> fetchTutorias(int idUsuario) async {
+    // Modificado: Agregar parámetro idUsuario
     final response =
         await http.get(Uri.parse('https://localhost:44339/api/tutorias'));
     if (response.statusCode == 200) {
       setState(() {
-        asignaturas = json.decode(response.body).cast<Map<String, dynamic>>();
+        tutorias = json.decode(response.body).cast<Map<String, dynamic>>();
+        tutorias = tutorias
+            .where((tutoria) => tutoria['ID_TUTOR'] == idUsuario)
+            .toList(); // Filtrar asignaturas por ID_USUARIO
       });
     } else {
       throw Exception('Failed to load tutorias');
     }
+  }
+
+  Future<void> fetchDatosUsuario() async {
+    final response =
+        await http.get(Uri.parse('https://localhost:44339/api/datosusuario'));
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      setState(() {
+        usuarios = Map.fromIterable(data,
+            key: (e) => e['ID_USUARIO'],
+            value: (e) => {
+                  'NOMBRE': e['NOMBRE'],
+                  'APELLIDOS': e['APELLIDOS'],
+                });
+      });
+    } else {
+      throw Exception('Failed to load datosusuario');
+    }
+  }
+
+  String buscarNombreDeUsuario(int id) {
+    return usuarios[id] != null
+        ? '${usuarios[id]!['NOMBRE']} ${usuarios[id]!['APELLIDOS']}' // Concatenar nombre y apellido
+        : 'Desconocido';
   }
 
   @override
@@ -54,7 +91,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget content(BuildContext context) {
     return Row(
       children: [
-        //VerticalDivider(thickness: 1, width: 1),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.all(20),
@@ -87,79 +123,69 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           SizedBox(height: 10),
-          Container(
-            height: 200,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 2,
-              itemBuilder: (BuildContext context, int index) {
-                return Padding(
-                  padding: EdgeInsets.only(right: 16.0),
-                  child: CourseItem(
-                    courseName: index == 0
-                        ? 'Matemáticas Avanzadas'
-                        : 'Programación en Python',
-                    tutorName:
-                        index == 0 ? 'Tutor: Juan Pérez' : 'Tutor: Juan Pérez',
-                    schedule: index == 0
-                        ? 'Martes 10:00 - 12:00'
-                        : 'Miércoles 14:00 - 16:00',
-                  ),
-                );
-              },
-            ),
-          ),
+          // Lista de solicitudes de tutorías aquí
         ],
       ),
     );
   }
 
   Widget misTutorias() {
-    List<Map<String, dynamic>> misAsignaturas =
-        asignaturas.where((asignatura) => asignatura['ID_TUTOR'] == 2).toList();
-    return Expanded(
-      child: Container(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Mis Asignaturas',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+    return Container(
+      padding: EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Mis Asignaturas',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
-            SizedBox(height: 10),
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                child: ListView.builder(
-                  itemCount: misAsignaturas.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          child: CourseItem(
-                            courseName: misAsignaturas[index]['MATERIA'],
-                            tutorName:
-                                'Tutor: Juan Pérez', // O puedes obtener el nombre del tutor de la lista si está disponible
-                            schedule:
-                                'Creada el ${misAsignaturas[index]['FECHA_CREACION']}',
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                      ],
-                    );
-                  },
-                ),
-              ),
+          ),
+          SizedBox(height: 10),
+          Container(
+            height:
+                300, // Altura predeterminada para evitar conflictos de desplazamiento
+            child: ListView.builder(
+              itemCount: tutorias.length,
+              itemBuilder: (BuildContext context, int index) {
+                final tutoria = tutorias[index];
+                final courseName = tutoria['MATERIA'] ?? 'Sin materia';
+                final tutorName = buscarNombreDeUsuario(tutoria['ID_TUTOR']);
+                final schedules = [
+                  tutoria['HORARIO1'] ?? 'No disponible',
+                  tutoria['HORARIO2'] ?? 'No disponible',
+                  tutoria['HORARIO3'] ?? 'No disponible',
+                ];
+                final assignedStudents = [
+                  tutoria['ID_ALUMNO1'] != null
+                      ? buscarNombreDeUsuario(tutoria['ID_ALUMNO1'])
+                      : null,
+                  tutoria['ID_ALUMNO2'] != null
+                      ? buscarNombreDeUsuario(tutoria['ID_ALUMNO2'])
+                      : null,
+                  tutoria['ID_ALUMNO3'] != null
+                      ? buscarNombreDeUsuario(tutoria['ID_ALUMNO3'])
+                      : null,
+                ];
+
+                // Convertir listas a List<String?>
+                final List<String?> schedulesNullable =
+                    List<String?>.from(schedules);
+                final List<String?> assignedStudentsNullable =
+                    List<String?>.from(assignedStudents);
+
+                return CourseItem(
+                  courseName: courseName,
+                  tutorName: tutorName,
+                  schedules: schedulesNullable,
+                  assignedStudents: assignedStudentsNullable,
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -223,24 +249,25 @@ class _HomeScreenState extends State<HomeScreen> {
 class CourseItem extends StatelessWidget {
   final String courseName;
   final String tutorName;
-  final String schedule;
+  final List<String?> schedules; // Lista de horarios
+  final List<String?> assignedStudents; // Lista de alumnos asignados
 
   const CourseItem({
     required this.courseName,
     required this.tutorName,
-    required this.schedule,
+    required this.schedules,
+    required this.assignedStudents,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 200,
-      margin: EdgeInsets.only(right: 16),
+      margin: EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Color(0xFF7ff9cb),
         borderRadius: BorderRadius.circular(10),
       ),
-      padding: EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -254,17 +281,51 @@ class CourseItem extends StatelessWidget {
           ),
           SizedBox(height: 8),
           Text(
-            tutorName,
+            'Tutor: $tutorName',
             style: TextStyle(
               color: Color(0xFF13161c),
+              fontSize: 16,
             ),
           ),
           SizedBox(height: 8),
           Text(
-            schedule,
+            'Horarios y Alumnos Asignados:',
             style: TextStyle(
               color: Color(0xFF13161c),
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
             ),
+          ),
+          SizedBox(height: 8),
+          // Construir la lista de horarios y alumnos asignados
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              for (int i = 0; i < schedules.length; i++)
+                Expanded(
+                  child: Container(
+                    //margin: EdgeInsets.symmetric(horizontal: 0),
+                    child: ListTile(
+                      title: Text(
+                        'Horario ${i + 1}: ${schedules[i] ?? 'No disponible'}',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.left, // Alineado a la izquierda
+                      ),
+                      subtitle: Text(
+                        assignedStudents[i] != null
+                            ? 'Alumno: ${assignedStudents[i]}'
+                            : 'Aún no asignado',
+                        style: TextStyle(
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.left, // Alineado a la izquierda
+                      ),
+                    ),
+                  ),
+                ),
+            ],
           ),
         ],
       ),

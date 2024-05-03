@@ -22,7 +22,12 @@ class _NavigationRailTScreenState extends State<NavigationRailTScreen> {
   int _selectedIndex = 0;
 
   late List<Widget> _widgetOptions = <Widget>[
-    HomeScreen(nombre: widget.nombre, tipoUsuario: widget.tipoUsuario),
+    HomeScreen(
+      nombre: widget.nombre,
+      tipoUsuario: widget.tipoUsuario,
+      idUsuario: widget
+          .idUsuario, // Asegúrate de obtener el ID del usuario actual aquí
+    ),
     //CursosScreen(),
     ChatsScreen(nombre: widget.nombre, tipoUsuario: widget.tipoUsuario),
     ConfiguracionScreen(

@@ -22,12 +22,17 @@ class _RegistroUsuarioState extends State<RegistroUsuario> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF13161c),
       appBar: AppBar(
         title: Text('Registro de Usuario'),
       ),
       body: Center(
         child: SingleChildScrollView(
           child: Container(
+            margin: EdgeInsets.all(20),
+            decoration: BoxDecoration(
+                color: Color(0xFF7ff9cb),
+                borderRadius: BorderRadius.circular(20)),
             constraints:
                 BoxConstraints(maxWidth: 600), // Ancho máximo del contenedor
             padding: EdgeInsets.all(20),
@@ -43,6 +48,8 @@ class _RegistroUsuarioState extends State<RegistroUsuario> {
                   TextFormField(
                     controller: _usernameController,
                     decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
                       labelText: 'Usuario',
                       border: OutlineInputBorder(),
                     ),
@@ -52,6 +59,8 @@ class _RegistroUsuarioState extends State<RegistroUsuario> {
                     controller: _passwordController,
                     obscureText: true,
                     decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
                       labelText: 'Contraseña',
                       border: OutlineInputBorder(),
                     ),
@@ -65,6 +74,8 @@ class _RegistroUsuarioState extends State<RegistroUsuario> {
                   TextFormField(
                     controller: _emailController,
                     decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
                       labelText: 'Correo Electrónico',
                       border: OutlineInputBorder(),
                     ),
@@ -73,6 +84,8 @@ class _RegistroUsuarioState extends State<RegistroUsuario> {
                   TextFormField(
                     controller: _nameController,
                     decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
                       labelText: 'Nombre',
                       border: OutlineInputBorder(),
                     ),
@@ -81,6 +94,8 @@ class _RegistroUsuarioState extends State<RegistroUsuario> {
                   TextFormField(
                     controller: _lastNameController,
                     decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
                       labelText: 'Apellidos',
                       border: OutlineInputBorder(),
                     ),
@@ -89,6 +104,8 @@ class _RegistroUsuarioState extends State<RegistroUsuario> {
                   TextFormField(
                     controller: _phoneController,
                     decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
                       labelText: 'Teléfono',
                       border: OutlineInputBorder(),
                     ),
@@ -97,6 +114,8 @@ class _RegistroUsuarioState extends State<RegistroUsuario> {
                   TextFormField(
                     controller: _descriptionController,
                     decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
                       labelText: 'Descripción',
                       border: OutlineInputBorder(),
                     ),
@@ -107,6 +126,7 @@ class _RegistroUsuarioState extends State<RegistroUsuario> {
                       Text('¿Qué tipo de usuario eres?'),
                       Flexible(
                         child: RadioListTile(
+                          fillColor: MaterialStatePropertyAll(Colors.white),
                           title: Text('Estudiante'),
                           value: '1',
                           groupValue: _userType,
@@ -119,6 +139,7 @@ class _RegistroUsuarioState extends State<RegistroUsuario> {
                       ),
                       Flexible(
                         child: RadioListTile(
+                          fillColor: MaterialStatePropertyAll(Colors.white),
                           title: Text('Tutor'),
                           value: '2',
                           groupValue: _userType,
@@ -155,7 +176,7 @@ class _RegistroUsuarioState extends State<RegistroUsuario> {
           await _crearTutor(userId);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Tutor agregado exitosamente'),
+              content: Text('Usuario agregado exitosamente'),
             ),
           );
           //Navigator.of(context).pop(true); // Indica que se agregó correctamente
