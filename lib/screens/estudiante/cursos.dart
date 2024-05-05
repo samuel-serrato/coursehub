@@ -31,8 +31,8 @@ class _CursosScreenState extends State<CursosScreen> {
               Container(
                 padding: EdgeInsets.all(20),
                 child: Column(children: [
-                  _buildCursoRow('Recomendados para tii', 7),
-                  SizedBox(height: 50.0),
+                  /* _buildCursoRow('Recomendados para tii', 7),
+                  SizedBox(height: 50.0), */
                   _buildCursoRow('Nuevos', 7),
                   SizedBox(height: 50.0),
                   _buildCursoRow('Matemáticas', 7),
