@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
   final String nombre;
@@ -298,6 +299,20 @@ class CourseItem extends StatelessWidget {
     required this.schedule, // Cambiado a schedule en lugar de schedules
   });
 
+  String convertirFormato12Horas(String tiempo24Horas) {
+    // Creamos un objeto de formato para el tiempo de 24 horas
+    final DateFormat format24Horas = DateFormat('HH:mm');
+
+    // Parseamos el tiempo en formato de 24 horas
+    final DateTime dateTime = format24Horas.parse(tiempo24Horas);
+
+    // Creamos un objeto de formato para el tiempo de 12 horas
+    final DateFormat format12Horas = DateFormat('h:mm a');
+
+    // Formateamos el tiempo en formato de 12 horas y lo devolvemos
+    return format12Horas.format(dateTime);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -329,7 +344,7 @@ class CourseItem extends StatelessWidget {
           SizedBox(height: 8),
           Text(
             // Cambiado para mostrar el horario
-            'Horario: $schedule',
+            'Horario: ${convertirFormato12Horas(schedule)}',
             style: TextStyle(
               color: Color(0xFF13161c),
             ),
