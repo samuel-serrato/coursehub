@@ -49,7 +49,7 @@ class _CursosScreenState extends State<CursosScreen> {
           .sort((a, b) => b['FECHA_CREACION'].compareTo(a['FECHA_CREACION']));
 
       // Limitar la cantidad de tutorías a las últimas 5
-      fetchedTutorias = fetchedTutorias.take(15).toList();
+      fetchedTutorias = fetchedTutorias.take(5).toList();
 
       setState(() {
         tutorias = fetchedTutorias;
@@ -81,6 +81,38 @@ class _CursosScreenState extends State<CursosScreen> {
     return usuarios[id] != null
         ? '${usuarios[id]!['NOMBRE']} ${usuarios[id]!['APELLIDOS']}' // Concatenar nombre y apellido
         : 'Desconocido';
+  }
+
+  void _seleccionarHorario(int index, int cursoIndex) async {
+    setState(() {
+      _horarioSeleccionado[index] = true;
+    });
+    final tutoriaId = tutorias[cursoIndex]['ID_TUTORIA'];
+    try {
+      final response = await http.put(
+        Uri.parse('https://localhost:44339/api/tutorias/$tutoriaId'),
+        body: json.encode({
+          if (index == 0) 'ID_ALUMNO1': widget.idUsuario.toString(),
+          if (index == 1) 'ID_ALUMNO2': widget.idUsuario.toString(),
+          if (index == 2) 'ID_ALUMNO3': widget.idUsuario.toString(),
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      print('Response Status Code: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        fetchTutorias();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Error al reservar el horario'),
+        ));
+      }
+    } catch (e) {
+      print('Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error al realizar la solicitud'),
+      ));
+    }
   }
 
   @override
@@ -273,43 +305,7 @@ class _CursosScreenState extends State<CursosScreen> {
                 final horario = horarios[index];
                 return ElevatedButton(
                   onPressed: horario != null && !horariosOcupados[index]
-                      ? () async {
-                          setState(() {
-                            horariosOcupados[index] = true;
-                          });
-                          final tutoriaId = tutorias[cursoIndex]['ID_TUTORIA'];
-                          try {
-                            final response = await http.put(
-                              Uri.parse(
-                                  'https://localhost:44339/api/tutorias/$tutoriaId'),
-                              body: json.encode({
-                                if (index == 0)
-                                  'ID_ALUMNO1': widget.idUsuario.toString(),
-                                if (index == 1)
-                                  'ID_ALUMNO2': widget.idUsuario.toString(),
-                                if (index == 2)
-                                  'ID_ALUMNO3': widget.idUsuario.toString(),
-                              }),
-                              headers: {'Content-Type': 'application/json'},
-                            );
-
-                            print(
-                                'Response Status Code: ${response.statusCode}');
-                            if (response.statusCode == 200) {
-                              fetchTutorias();
-                            } else {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
-                                content: Text('Error al reservar el horario'),
-                              ));
-                            }
-                          } catch (e) {
-                            print('Error: $e');
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text('Error al realizar la solicitud'),
-                            ));
-                          }
-                        }
+                      ? () => _seleccionarHorario(index, cursoIndex)
                       : null,
                   child: Text(
                     horario != null

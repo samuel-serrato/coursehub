@@ -71,6 +71,52 @@ class _HomeScreenState extends State<HomeScreen> {
         : 'Desconocido';
   }
 
+  Future<void> liberarHorario(
+      int idTutoria, Map<String, dynamic> tutoria) async {
+    final url = 'https://localhost:44339/api/tutorias/$idTutoria';
+    String? horarioSeleccionado;
+
+    // Determinar cuál horario debe ser nulo
+    if (tutoria['ID_ALUMNO1'] == widget.idUsuario) {
+      horarioSeleccionado = 'ID_ALUMNO1';
+    } else if (tutoria['ID_ALUMNO2'] == widget.idUsuario) {
+      horarioSeleccionado = 'ID_ALUMNO2';
+    } else if (tutoria['ID_ALUMNO3'] == widget.idUsuario) {
+      horarioSeleccionado = 'ID_ALUMNO3';
+    }
+
+    print('Horario seleccionado: $horarioSeleccionado');
+
+    // Construir el cuerpo JSON dinámicamente
+    final Map<String, dynamic> requestBody = {
+      horarioSeleccionado!:
+          null, // Usar el valor de horarioSeleccionado como clave
+    };
+
+    print('Solicitud HTTP: $requestBody');
+
+    // Enviar la solicitud HTTP
+    final response = await http.put(
+      Uri.parse(url),
+      body: jsonEncode(requestBody),
+      headers: {'Content-Type': 'application/json'},
+    );
+
+    print('Respuesta HTTP: ${response.statusCode}');
+    print('Cuerpo de respuesta: ${response.body}');
+
+    // Añadir puntos de impresión adicionales si es necesario
+    // Por ejemplo:
+    // print('Después de la solicitud HTTP');
+
+    if (response.statusCode == 200) {
+      // Si la actualización fue exitosa, vuelves a cargar las tutorías
+      fetchTutorias();
+    } else {
+      throw Exception('Error al liberar el horario');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -151,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           SizedBox(height: 10),
           Container(
-            height: 200,
+            height: 220,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: tutorias.length,
@@ -159,6 +205,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 final tutoria = tutorias[index];
                 final String horario = getHorario(
                     tutoria); // Obtener el horario correspondiente al alumno
+                // Al presionar el botón "Liberar Horario", se llama a la función liberarHorario
+                void liberarHorarioCallback() {
+                  liberarHorario(tutoria['ID_TUTORIA'],
+                      tutoria); // Pasar el ID de la tutoría
+                }
+
                 return Padding(
                   padding: EdgeInsets.only(right: 16.0),
                   child: CourseItem(
@@ -168,6 +220,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     tutorName:
                         'Tutor: ${buscarNombreDeUsuario(tutoria['ID_TUTOR'])}',
                     schedule: horario,
+                    liberarHorarioCallback:
+                        liberarHorarioCallback, // Pasar la función como callback
                   ),
                 );
               },
@@ -291,12 +345,14 @@ class CourseItem extends StatelessWidget {
   final String category; // Nuevo parámetro
   final String tutorName;
   final String schedule; // Cambiado a schedule en lugar de schedules
+  final VoidCallback liberarHorarioCallback; // Nueva callback
 
   const CourseItem({
     required this.courseName,
     required this.category, // Actualizado
     required this.tutorName,
     required this.schedule, // Cambiado a schedule en lugar de schedules
+    required this.liberarHorarioCallback, // Nueva callback
   });
 
   String convertirFormato12Horas(String tiempo24Horas) {
@@ -316,7 +372,7 @@ class CourseItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 250,
+      width: 280,
       margin: EdgeInsets.only(right: 16),
       decoration: BoxDecoration(
         color: Color(0xFF7ff9cb),
@@ -365,6 +421,15 @@ class CourseItem extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
                 ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              ElevatedButton(
+                onPressed:
+                    liberarHorarioCallback, // Llama a la callback cuando se presiona
+                child: Text('Liberar Horario'), // Texto para el botón
               ),
             ],
           ),
