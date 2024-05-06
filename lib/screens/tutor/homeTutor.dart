@@ -30,15 +30,29 @@ class _HomeScreenState extends State<HomeScreen> {
   String selectedTime2 = '';
   String selectedTime3 = '';
 
+  String? selectedCategoria;
+
   @override
   void initState() {
     super.initState();
     fetchTutorias(
         widget.idUsuario); // No es necesario pasar el ID del usuario aquí
     fetchDatosUsuario();
+    selectedCategoria =
+        'Selecciona la categoría'; // Establecer el valor predeterminado
   }
 
   void _dialogAgregarTutoria(BuildContext context) {
+    List<String> categorias = [
+      'CIENCIAS EXACTAS',
+      'DESARROLLO DE SOFTWARE',
+      'HARDWARE',
+      'DISEÑO',
+      'ARTES',
+      'LITERATURA',
+      'IDIOMAS'
+    ];
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -59,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   width: MediaQuery.of(context).size.width *
                       0.8, // Ancho del 80% de la pantalla
                   height: MediaQuery.of(context).size.height *
-                      0.6, // Ancho del 80% de la pantalla
+                      0.7, // Alto del 80% de la pantalla
                   padding:
                       EdgeInsets.all(20), // Espacio alrededor del contenido
                   child: Padding(
@@ -85,6 +99,31 @@ class _HomeScreenState extends State<HomeScreen> {
                             fillColor: Colors.white,
                             hintText: 'Materia',
                             border: OutlineInputBorder(),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        DropdownButtonFormField<String>(
+                          style: TextStyle(fontSize: 14),
+                          value: selectedCategoria,
+                          items: [
+                            'Selecciona la categoría', // Texto predeterminado
+                            ...categorias, // Otras categorías
+                          ].map((String categoria) {
+                            return DropdownMenuItem<String>(
+                              value: categoria,
+                              child: Text(categoria),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedCategoria = newValue!;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            border: OutlineInputBorder(),
+                            hintText: 'Categoría',
                           ),
                         ),
                         SizedBox(height: 50),
@@ -336,6 +375,8 @@ class _HomeScreenState extends State<HomeScreen> {
               itemBuilder: (BuildContext context, int index) {
                 final tutoria = tutorias[index];
                 final courseName = tutoria['MATERIA'] ?? 'Sin materia';
+                final category =
+                    tutoria['CATEGORIA'] ?? 'Sin categoría'; // Nueva línea
                 final tutorName = buscarNombreDeUsuario(tutoria['ID_TUTOR']);
                 final schedules = [
                   tutoria['HORARIO1'] ?? 'No disponible',
@@ -362,6 +403,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 return CourseItem(
                   courseName: courseName,
+                  category: category, // Nueva línea
                   tutorName: tutorName,
                   schedules: schedulesNullable,
                   assignedStudents: assignedStudentsNullable,
@@ -462,6 +504,7 @@ class _HomeScreenState extends State<HomeScreen> {
       'HORARIO2': convertedTime2,
       'HORARIO3': convertedTime3,
       'FECHA_CREACION': formattedDateTime,
+      'CATEGORIA': selectedCategoria
     };
 
     try {
@@ -512,12 +555,14 @@ class CourseItem extends StatelessWidget {
   }
 
   final String courseName;
+  final String category; // Nuevo parámetro
   final String tutorName;
   final List<String?> schedules; // Lista de horarios
   final List<String?> assignedStudents; // Lista de alumnos asignados
 
   const CourseItem({
     required this.courseName,
+    required this.category, // Actualizado
     required this.tutorName,
     required this.schedules,
     required this.assignedStudents,
@@ -537,13 +582,20 @@ class CourseItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            courseName,
-            style: TextStyle(
-              color: Color(0xFF13161c),
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  courseName,
+                  style: TextStyle(
+                    color: Color(0xFF13161c),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            ],
           ),
           SizedBox(height: 8),
           Text(
@@ -615,6 +667,25 @@ class CourseItem extends StatelessWidget {
                       ),
                   ],
                 ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Icon(
+                Icons.label,
+                color: Color(0xFF13161c),
+                size: 18,
+              ),
+              SizedBox(width: 4),
+              Text(
+                category,
+                style: TextStyle(
+                  color: Color(0xFF13161c),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );

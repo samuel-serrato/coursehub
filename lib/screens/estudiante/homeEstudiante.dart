@@ -162,6 +162,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: EdgeInsets.only(right: 16.0),
                   child: CourseItem(
                     courseName: tutoria['MATERIA'] ?? 'Sin materia',
+                    category:
+                        tutoria['CATEGORIA'] ?? 'Sin categoría', // Nueva línea
                     tutorName:
                         'Tutor: ${buscarNombreDeUsuario(tutoria['ID_TUTOR'])}',
                     schedule: horario,
@@ -285,11 +287,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class CourseItem extends StatelessWidget {
   final String courseName;
+  final String category; // Nuevo parámetro
   final String tutorName;
   final String schedule; // Cambiado a schedule en lugar de schedules
 
   const CourseItem({
     required this.courseName,
+    required this.category, // Actualizado
     required this.tutorName,
     required this.schedule, // Cambiado a schedule en lugar de schedules
   });
@@ -297,7 +301,7 @@ class CourseItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 200,
+      width: 250,
       margin: EdgeInsets.only(right: 16),
       decoration: BoxDecoration(
         color: Color(0xFF7ff9cb),
@@ -325,10 +329,29 @@ class CourseItem extends StatelessWidget {
           SizedBox(height: 8),
           Text(
             // Cambiado para mostrar el horario
-            schedule,
+            'Horario: $schedule',
             style: TextStyle(
               color: Color(0xFF13161c),
             ),
+          ),
+          SizedBox(height: 50),
+          Row(
+            children: [
+              Icon(
+                Icons.label,
+                color: Color(0xFF13161c),
+                size: 18,
+              ),
+              SizedBox(width: 4),
+              Text(
+                category,
+                style: TextStyle(
+                  color: Color(0xFF13161c),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+              ),
+            ],
           ),
         ],
       ),

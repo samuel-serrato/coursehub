@@ -1,18 +1,84 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart'; // Agregamos esta importación
 
 class CursosScreen extends StatefulWidget {
   final String nombre; // Nuevo
   final String tipoUsuario; // Nuevo
+  final int idUsuario;
 
   @override
   State<CursosScreen> createState() => _CursosScreenState();
 
-  CursosScreen({required this.nombre, required this.tipoUsuario});
+  CursosScreen({required this.nombre, required this.tipoUsuario, required this.idUsuario});
 }
 
 class _CursosScreenState extends State<CursosScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
+  List<Map<String, dynamic>> tutorias = []; // Nueva lista de tutorías
+  Map<int, Map<String, dynamic>> usuarios =
+      {}; // Almacena el nombre y apellido del usuario por ID
+
+  List<bool> _horarioSeleccionado = [
+    false,
+    false,
+    false
+  ]; // Estado de selección de horarios
+
+  @override
+  void initState() {
+    super.initState();
+    fetchTutorias(); // Llama a fetchTutorias al iniciar la pantalla
+    fetchDatosUsuario();
+  }
+
+  Future<void> fetchTutorias() async {
+    final response =
+        await http.get(Uri.parse('https://localhost:44339/api/tutorias'));
+    if (response.statusCode == 200) {
+      List<Map<String, dynamic>> fetchedTutorias =
+          json.decode(response.body).cast<Map<String, dynamic>>();
+
+      // Ordenar las tutorías por fecha de creación
+      fetchedTutorias
+          .sort((a, b) => b['FECHA_CREACION'].compareTo(a['FECHA_CREACION']));
+
+      // Limitar la cantidad de tutorías a las últimas 5
+      fetchedTutorias = fetchedTutorias.take(15).toList();
+
+      setState(() {
+        tutorias = fetchedTutorias;
+      });
+    } else {
+      throw Exception('Failed to load tutorias');
+    }
+  }
+
+  Future<void> fetchDatosUsuario() async {
+    final response =
+        await http.get(Uri.parse('https://localhost:44339/api/datosusuario'));
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      setState(() {
+        usuarios = Map.fromIterable(data,
+            key: (e) => e['ID_USUARIO'],
+            value: (e) => {
+                  'NOMBRE': e['NOMBRE'],
+                  'APELLIDOS': e['APELLIDOS'],
+                });
+      });
+    } else {
+      throw Exception('Failed to load datosusuario');
+    }
+  }
+
+  String buscarNombreDeUsuario(int id) {
+    return usuarios[id] != null
+        ? '${usuarios[id]!['NOMBRE']} ${usuarios[id]!['APELLIDOS']}' // Concatenar nombre y apellido
+        : 'Desconocido';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +99,11 @@ class _CursosScreenState extends State<CursosScreen> {
                 child: Column(children: [
                   /* _buildCursoRow('Recomendados para tii', 7),
                   SizedBox(height: 50.0), */
-                  _buildCursoRow('Nuevos', 7),
-                  SizedBox(height: 50.0),
+                  _buildCursoRow('Nuevos'),
+/*                   SizedBox(height: 50.0),
                   _buildCursoRow('Matemáticas', 7),
                   SizedBox(height: 50.0),
-                  _buildCursoRow('Desarrollo de Software', 7),
+                  _buildCursoRow('Desarrollo de Software', 7), */
                 ]),
               ),
             ],
@@ -47,7 +113,7 @@ class _CursosScreenState extends State<CursosScreen> {
     );
   }
 
-  Widget _buildCursoRow(String title, int count) {
+  Widget _buildCursoRow(String title) {
     ScrollController _scrollController = ScrollController();
 
     void _scroll(bool forward) {
@@ -79,9 +145,28 @@ class _CursosScreenState extends State<CursosScreen> {
               child: ListView.builder(
                 controller: _scrollController,
                 scrollDirection: Axis.horizontal,
-                itemCount: count,
+                itemCount: tutorias.length, // Usar la cantidad de tutorías
                 itemBuilder: (BuildContext context, int index) {
-                  return _buildCursoItem('Curso ${index + 1}');
+                  final tutoria = tutorias[index];
+                  final courseName = tutoria['MATERIA'] ?? 'Sin materia';
+                  final tutorName = buscarNombreDeUsuario(
+                          tutoria['ID_TUTOR']) ??
+                      'Sin tutor'; // Modificar según la estructura de tus datos
+                  // Construir el item de curso utilizando los datos de la tutoría
+                  final category =
+                      tutoria['CATEGORIA'] ?? 'Sin categoría'; // Nueva línea
+                  final List<String> horarios = [
+                    tutoria['HORARIO1'] ?? 'No disponible',
+                    tutoria['HORARIO2'] ?? 'No disponible',
+                    tutoria['HORARIO3'] ?? 'No disponible',
+                  ];
+                  final List<bool> horariosOcupados = [
+                    tutoria['ID_ALUMNO1'] != null,
+                    tutoria['ID_ALUMNO2'] != null,
+                    tutoria['ID_ALUMNO3'] != null,
+                  ];
+                  return _buildCursoItem(courseName, tutorName, category,
+                      horarios, horariosOcupados);
                 },
               ),
             ),
@@ -125,11 +210,26 @@ class _CursosScreenState extends State<CursosScreen> {
     );
   }
 
-  Widget _buildCursoItem(String nombreCurso) {
+  String convertirFormato12Horas(String tiempo24Horas) {
+    // Creamos un objeto de formato para el tiempo de 24 horas
+    final DateFormat format24Horas = DateFormat('HH:mm');
+
+    // Parseamos el tiempo en formato de 24 horas
+    final DateTime dateTime = format24Horas.parse(tiempo24Horas);
+
+    // Creamos un objeto de formato para el tiempo de 12 horas
+    final DateFormat format12Horas = DateFormat('h:mm a');
+
+    // Formateamos el tiempo en formato de 12 horas y lo devolvemos
+    return format12Horas.format(dateTime);
+  }
+
+  Widget _buildCursoItem(String nombreCurso, String tutorName, String category,
+      List<String> horarios, List<bool> horariosOcupados) {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: Container(
-        width: 300.0, // Ancho de cada card
+        width: 350.0, // Ancho de cada card
         padding: EdgeInsets.all(10.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15.0),
@@ -147,8 +247,16 @@ class _CursosScreenState extends State<CursosScreen> {
               ),
             ),
             SizedBox(height: 10.0),
-            Text(
+            /* Text(
               'Descripción del curso...',
+              style: TextStyle(
+                color: Color(0xFF13161c),
+                fontSize: 14.0,
+              ),
+            ),
+            SizedBox(height: 10.0), */
+            Text(
+              'Tutor: $tutorName', // Mostrar el nombre del tutor
               style: TextStyle(
                 color: Color(0xFF13161c),
                 fontSize: 14.0,
@@ -156,16 +264,94 @@ class _CursosScreenState extends State<CursosScreen> {
             ),
             SizedBox(height: 10.0),
             Text(
-              'Tutor: ',
+              'Horarios:', // Agregar título para los horarios
               style: TextStyle(
                 color: Color(0xFF13161c),
+                fontWeight: FontWeight.bold,
                 fontSize: 14.0,
               ),
+            ),
+            SizedBox(height: 5.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: List.generate(horarios.length, (index) {
+                final horario = horarios[index];
+                return ElevatedButton(
+                  onPressed: horario != null && !horariosOcupados[index]
+                      ? () {
+                          // Acción al seleccionar un horario
+                          setState(() {
+                            // Asignar el horario al usuario actual
+                            asignarHorarioAlUsuario(index);
+                            // Deshabilitar el horario seleccionado
+                            horariosOcupados[index] = true;
+                          });
+                        }
+                      : null,
+                  child: Text(
+                    horario != null
+                        ? convertirFormato12Horas(horario)
+                        : 'No disponible',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  style: ButtonStyle(
+                    backgroundColor: horariosOcupados[index]
+                        ? MaterialStateProperty.all(Colors
+                            .grey) // Si está ocupado, deshabilitar el botón
+                        : MaterialStateProperty.all(Color.fromARGB(255, 1, 83,
+                            51)), // Si no está ocupado, usar el color normal
+                  ),
+                );
+              }),
+            ),
+            SizedBox(height: 20.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.label,
+                  color: Color(0xFF13161c),
+                  size: 18,
+                ),
+                SizedBox(width: 4),
+                Text(
+                  category,
+                  style: TextStyle(
+                    color: Color(0xFF13161c),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
       ),
     );
+  }
+
+  void asignarHorarioAlUsuario(int horarioIndex) async {
+    final horarioSeleccionado = 'HORARIO${horarioIndex + 1}';
+    final idUsuario = 123; // Suponiendo que ya tienes el ID del usuario actual
+
+    // Realizar la petición HTTP para actualizar la tutoría con el horario seleccionado y el ID del usuario actual
+    final response = await http.put(
+      Uri.parse('https://localhost:44339/api/t'),
+      body: {
+        'horario': horarioSeleccionado,
+        'idUsuario': idUsuario.toString(),
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // El horario ha sido asignado correctamente
+      print('Horario asignado correctamente al usuario.');
+    } else {
+      // Hubo un error al asignar el horario
+      print('Error al asignar el horario al usuario.');
+    }
   }
 
   Widget header(BuildContext context) {
@@ -271,9 +457,3 @@ class _CursosScreenState extends State<CursosScreen> {
     );
   }
 }
-
-/* void main() {
-  runApp(MaterialApp(
-    home: CursosScreen(),
-  ));
-} */
