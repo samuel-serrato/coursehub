@@ -121,7 +121,7 @@ class _CursosScreenState extends State<CursosScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Confirmación'),
-          content: Text('¿Está seguro de que quiere reservar este horario?'),
+          content: Text('¿Est seguro de que quiere reservar este horario?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
