@@ -456,7 +456,7 @@ class CourseItem extends StatelessWidget {
                         return AlertDialog(
                           title: Text("Confirmación"),
                           content: Text(
-                              "¿Estás seguro de que quieres liberar este horario?"),
+                              "¿Está seguro de que quiere liberar este horario?"),
                           actions: [
                             TextButton(
                               onPressed: () {
