@@ -115,6 +115,36 @@ class _CursosScreenState extends State<CursosScreen> {
     }
   }
 
+  void _mostrarConfirmacion(BuildContext context, int index, int cursoIndex) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirmación'),
+          content: Text('¿Estás seguro de que quieres reservar este horario?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: Text('Confirmar'),
+            ),
+          ],
+        );
+      },
+    ).then((confirmado) {
+      if (confirmado != null && confirmado) {
+        _seleccionarHorario(index, cursoIndex);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -305,7 +335,7 @@ class _CursosScreenState extends State<CursosScreen> {
                 final horario = horarios[index];
                 return ElevatedButton(
                   onPressed: horario != null && !horariosOcupados[index]
-                      ? () => _seleccionarHorario(index, cursoIndex)
+                      ? () => _mostrarConfirmacion(context, index, cursoIndex)
                       : null,
                   child: Text(
                     horario != null

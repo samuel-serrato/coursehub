@@ -112,6 +112,24 @@ class _HomeScreenState extends State<HomeScreen> {
     if (response.statusCode == 200) {
       // Si la actualización fue exitosa, vuelves a cargar las tutorías
       fetchTutorias();
+      // Mostrar mensaje de confirmación
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Horario Liberado"),
+            content: Text("El horario ha sido liberado correctamente."),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
     } else {
       throw Exception('Error al liberar el horario');
     }
@@ -425,11 +443,45 @@ class CourseItem extends StatelessWidget {
             ],
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              ElevatedButton(
-                onPressed:
-                    liberarHorarioCallback, // Llama a la callback cuando se presiona
-                child: Text('Liberar Horario'), // Texto para el botón
+              CircleAvatar(
+                backgroundColor: Color(0xFF13161c),
+                radius: 18,
+                child: IconButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("Confirmación"),
+                          content: Text(
+                              "¿Estás seguro de que quieres liberar este horario?"),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text("Cancelar"),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                liberarHorarioCallback();
+                              },
+                              child: Text("Confirmar"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  icon: Icon(
+                    Icons.access_time,
+                    color: Colors.white,
+                    size: 18,
+                  ), // Icono de reloj
+                ),
               ),
             ],
           ),
