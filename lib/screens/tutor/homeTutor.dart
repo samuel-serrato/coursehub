@@ -521,7 +521,9 @@ class _HomeScreenState extends State<HomeScreen> {
         // Si la solicitud fue exitosa, cierra el diálogo y muestra un mensaje
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Tutoría agregada exitosamente')),
+          SnackBar(content: Text('Tutoría agregada exitosamente'),
+          backgroundColor: Colors.green,
+          ),
         );
         // Actualiza la lista de tutorías
         await fetchTutorias(widget.idUsuario);

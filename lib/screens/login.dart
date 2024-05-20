@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:coursehub/screens/estudiante/homeEstudiante.dart';
 import '../navigation_railEstudiante.dart';
 import '../navigation_railTutor.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -40,18 +41,29 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              FlutterLogo(
+              /* FlutterLogo(
                 size: 150,
-              ),
-              /* Text(
-                'COURSEHUB',
-                style: TextStyle(
-                  color: Color(0xFF13161c),
-                  fontSize: 50.0,
-                  fontWeight: FontWeight.bold,
-                ),
               ), */
-              SizedBox(height: 50),
+              Padding(
+                padding: const EdgeInsets.only(top: 20),
+                child: SizedBox(
+                  width: 180, // Ancho deseado del botón
+                  height: 180, // Alto deseado del botón
+                  child: FloatingActionButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100)),
+                    backgroundColor: Colors.white,
+                    child: Image.asset(
+                      'assets/coursehub.png', // Ruta de tu imagen
+                      width: 500, // Ancho de la imagen
+                      height: 500, // Alto de la imagen
+                      fit: BoxFit.cover, // Ajuste de la imagen
+                    ),
+                    onPressed: () {},
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
               TextFormField(
                 controller: _usernameController,
                 decoration: InputDecoration(

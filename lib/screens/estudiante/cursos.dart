@@ -21,6 +21,13 @@ class _CursosScreenState extends State<CursosScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchText = '';
   List<Map<String, dynamic>> tutorias = []; // Nueva lista de tutorías
+  List<Map<String, dynamic>> tutoriasNuevas = []; // Nueva lista de tutorías
+  List<Map<String, dynamic>> tutoriasRecomendadas =
+      []; // Nueva lista de tutorías
+
+  List<Map<String, dynamic>> usuariocategoria =
+      []; // Nueva lista de usuarioCategoria
+
   Map<int, Map<String, dynamic>> usuarios =
       {}; // Almacena el nombre y apellido del usuario por ID
 
@@ -30,11 +37,49 @@ class _CursosScreenState extends State<CursosScreen> {
     false
   ]; // Estado de selección de horarios
 
+  bool isLoading = false; // Estado de carga
+
   @override
   void initState() {
-    super.initState();
-    fetchTutorias(); // Llama a fetchTutorias al iniciar la pantalla
-    fetchDatosUsuario();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    setState(() {
+      isLoading = true; // Mostrar el indicador de carga
+    });
+
+    try {
+      await fetchTutorias();
+      await obtenerUsuarioCategoria();
+      await fetchDatosUsuario();
+      await fetchTutoriasNuevas();
+      await fetchTutoriasRecomendadas();
+    } catch (e) {
+      // Manejo de errores
+      print(e);
+    }
+
+    setState(() {
+      isLoading = false; // Ocultar el indicador de carga
+    });
+  }
+
+  Future<void> obtenerUsuarioCategoria() async {
+    final response = await http
+        .get(Uri.parse('https://localhost:44339/api/usuariocategoria'));
+    if (response.statusCode == 200) {
+      List<Map<String, dynamic>> fetchedCategorias =
+          json.decode(response.body).cast<Map<String, dynamic>>();
+      setState(() {
+        usuariocategoria = fetchedCategorias
+            .where((categoria) =>
+                categoria['ID_USUARIO'] == widget.idUsuario.toString())
+            .toList();
+      });
+    } else {
+      throw Exception('Failed to load usuario categorias');
+    }
   }
 
   Future<void> fetchTutorias() async {
@@ -53,6 +98,62 @@ class _CursosScreenState extends State<CursosScreen> {
 
       setState(() {
         tutorias = fetchedTutorias;
+      });
+    } else {
+      throw Exception('Failed to load tutorias');
+    }
+  }
+
+  Future<void> fetchTutoriasNuevas() async {
+    final response =
+        await http.get(Uri.parse('https://localhost:44339/api/tutorias'));
+    if (response.statusCode == 200) {
+      List<Map<String, dynamic>> fetchedTutorias =
+          json.decode(response.body).cast<Map<String, dynamic>>();
+
+      // Ordenar las tutorías por fecha de creación
+      fetchedTutorias
+          .sort((a, b) => b['FECHA_CREACION'].compareTo(a['FECHA_CREACION']));
+
+      // Limitar la cantidad de tutorías a las últimas 5
+      fetchedTutorias = fetchedTutorias.take(5).toList();
+
+      setState(() {
+        tutoriasNuevas = fetchedTutorias;
+      });
+    } else {
+      throw Exception('Failed to load tutorias');
+    }
+  }
+
+  Future<void> fetchTutoriasRecomendadas() async {
+    final response =
+        await http.get(Uri.parse('https://localhost:44339/api/tutorias'));
+    if (response.statusCode == 200) {
+      List<Map<String, dynamic>> fetchedTutorias =
+          json.decode(response.body).cast<Map<String, dynamic>>();
+
+      // Filtrar tutorías basadas en las categorías del usuario
+      List<Map<String, dynamic>> recomendadas =
+          fetchedTutorias.where((tutoria) {
+        return usuariocategoria
+            .any((uc) => uc['CATEGORIA'] == tutoria['CATEGORIA']);
+      }).toList();
+
+      // Ordenar por fecha (asumiendo que la fecha está en el campo 'FECHA' y es una cadena en formato ISO 8601)
+      recomendadas.sort((a, b) {
+        try {
+          DateTime fechaA = DateTime.parse(a['FECHA_CREACION']);
+          DateTime fechaB = DateTime.parse(b['FECHA_CREACION']);
+          return fechaB.compareTo(fechaA);
+        } catch (e) {
+          print('Error parsing date: $e');
+          return 0;
+        }
+      });
+
+      setState(() {
+        tutoriasRecomendadas = recomendadas;
       });
     } else {
       throw Exception('Failed to load tutorias');
@@ -84,10 +185,17 @@ class _CursosScreenState extends State<CursosScreen> {
   }
 
   void _seleccionarHorario(int index, int cursoIndex) async {
-    setState(() {
-      _horarioSeleccionado[index] = true;
-    });
     final tutoriaId = tutorias[cursoIndex]['ID_TUTORIA'];
+
+    // Verificar si el alumno ya tiene su ID en alguno de los campos ID_ALUMNO
+    if (tutorias[cursoIndex]['ID_ALUMNO1'] == widget.idUsuario ||
+        tutorias[cursoIndex]['ID_ALUMNO2'] == widget.idUsuario ||
+        tutorias[cursoIndex]['ID_ALUMNO3'] == widget.idUsuario) {
+      // Mostrar advertencia si el alumno ya tiene un horario asignado en esta tutoría
+      _mostrarAdvertencia(context);
+      return; // Salir de la función sin realizar más acciones
+    }
+
     try {
       final response = await http.put(
         Uri.parse('https://localhost:44339/api/tutorias/$tutoriaId'),
@@ -145,40 +253,63 @@ class _CursosScreenState extends State<CursosScreen> {
     });
   }
 
+  void _mostrarAdvertencia(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Advertencia'),
+          content: Text('Solo puedes seleccionar un horario por tutoría.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Aceptar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFF13161c),
-      /* appBar: AppBar(
-        title: Text('Cursos'),
-      ), */
-      body: SingleChildScrollView(
-        child: Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              header(context),
-              search(),
-              Container(
-                padding: EdgeInsets.all(20),
-                child: Column(children: [
-                  /* _buildCursoRow('Recomendados para tii', 7),
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(), // Muestra el círculo de carga
+            )
+          : SingleChildScrollView(
+              child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    header(context),
+                    search(),
+                    Container(
+                      padding: EdgeInsets.all(20),
+                      child: Column(children: [
+                        /* _buildCursoRow('Recomendados para tii', 7),
                   SizedBox(height: 50.0), */
-                  _buildCursoRow('Nuevos'),
-/*                   SizedBox(height: 50.0),
-                  _buildCursoRow('Matemáticas', 7),
+                        _buildCursoRow(
+                            'Recomendados para ti', tutoriasRecomendadas),
+                        SizedBox(height: 50.0),
+                        _buildCursoRow('Nuevos', tutoriasNuevas),
+                        /* _buildCursoRow('Matemáticas', 7),
                   SizedBox(height: 50.0),
                   _buildCursoRow('Desarrollo de Software', 7), */
-                ]),
+                      ]),
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 
-  Widget _buildCursoRow(String title) {
+  Widget _buildCursoRow(String title, List<Map<String, dynamic>> tutorias) {
     ScrollController _scrollController = ScrollController();
 
     void _scroll(bool forward) {
@@ -210,14 +341,12 @@ class _CursosScreenState extends State<CursosScreen> {
               child: ListView.builder(
                 controller: _scrollController,
                 scrollDirection: Axis.horizontal,
-                itemCount: tutorias.length, // Usar la cantidad de tutorías
+                itemCount: tutorias.length, // Usar la cantidad de cursos
                 itemBuilder: (BuildContext context, int index) {
                   final tutoria = tutorias[index];
                   final courseName = tutoria['MATERIA'] ?? 'Sin materia';
-                  final tutorName = buscarNombreDeUsuario(
-                          tutoria['ID_TUTOR']) ??
-                      'Sin tutor'; // Modificar según la estructura de tus datos
-                  // Construir el item de curso utilizando los datos de la tutoría
+                  final tutorName =
+                      buscarNombreDeUsuario(tutoria['ID_TUTOR']) ?? 'Sin tutor';
                   final category =
                       tutoria['CATEGORIA'] ?? 'Sin categoría'; // Nueva línea
                   final List<String> horarios = [
@@ -346,11 +475,11 @@ class _CursosScreenState extends State<CursosScreen> {
                     ),
                   ),
                   style: ButtonStyle(
-                    backgroundColor: horariosOcupados[index]
-                        ? MaterialStateProperty.all(Colors.grey)
-                        : MaterialStateProperty.all(
-                            Color.fromARGB(255, 1, 83, 51)),
-                  ),
+                      backgroundColor: horariosOcupados[index]
+                          ? MaterialStateProperty.all(Colors.grey)
+                          : MaterialStateProperty.all(
+                              Color.fromARGB(255, 29, 55, 104),
+                            )),
                 );
               }),
             ),
@@ -482,4 +611,14 @@ class _CursosScreenState extends State<CursosScreen> {
       ),
     );
   }
+}
+
+class usuarioCategoria {
+  final int idUsuario;
+  final String categoria;
+
+  usuarioCategoria({
+    required this.idUsuario,
+    required this.categoria,
+  });
 }

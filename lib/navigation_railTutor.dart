@@ -29,7 +29,11 @@ class _NavigationRailTScreenState extends State<NavigationRailTScreen> {
           .idUsuario, // Asegúrate de obtener el ID del usuario actual aquí
     ),
     //CursosScreen(),
-    ChatsScreen(nombre: widget.nombre, tipoUsuario: widget.tipoUsuario),
+    ChatsScreen(
+      nombre: widget.nombre,
+      tipoUsuario: widget.tipoUsuario,
+      idUsuario: widget.idUsuario,
+    ),
     ConfiguracionScreen(
       nombre: widget.nombre,
       tipoUsuario: widget.tipoUsuario,
