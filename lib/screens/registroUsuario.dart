@@ -349,7 +349,7 @@ class _RegistroUsuarioState extends State<RegistroUsuario> {
                         Row(
                           children: [
                             Text(
-                              '¿Qué tipo de usuario eres',
+                              '¿Qué tipo de usuario eres?',
                               style:
                                   TextStyle(fontSize: 16, color: Colors.white),
                             ),
