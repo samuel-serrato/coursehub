@@ -278,33 +278,45 @@ class _CursosScreenState extends State<CursosScreen> {
     return Scaffold(
       backgroundColor: Color(0xFF13161c),
       body: isLoading
-          ? Center(
-              child: CircularProgressIndicator(), // Muestra el círculo de carga
-            )
-          : SingleChildScrollView(
-              child: Container(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    header(context),
-                    search(),
-                    Container(
-                      padding: EdgeInsets.all(20),
-                      child: Column(children: [
-                        /* _buildCursoRow('Recomendados para tii', 7),
-                  SizedBox(height: 50.0), */
-                        _buildCursoRow(
-                            'Recomendados para ti', tutoriasRecomendadas),
-                        SizedBox(height: 50.0),
-                        _buildCursoRow('Nuevos', tutoriasNuevas),
-                        /* _buildCursoRow('Matemáticas', 7),
-                  SizedBox(height: 50.0),
-                  _buildCursoRow('Desarrollo de Software', 7), */
-                      ]),
+          ? Center(child: CircularProgressIndicator())
+          : Stack(
+              children: [
+                SingleChildScrollView(
+                  child: Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        header(context),
+                        search(),
+                        Container(
+                          padding: EdgeInsets.all(20),
+                          child: Column(children: [
+                            _buildCursoRow(
+                                'Recomendados para ti', tutoriasRecomendadas),
+                            SizedBox(height: 50.0),
+                            _buildCursoRow('Nuevos', tutoriasNuevas),
+                          ]),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    color: Color(0xFF13161c),
+                    padding: EdgeInsets.all(10.0),
+                    child: Center(
+                      child: Text(
+                        'Los cursos online tienen horarios fijos de lunes a viernes, que se basan en la disponibilidad del tutor durante estos días hábiles.',
+                        style: TextStyle(color: Colors.grey[200], fontSize: 13),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
     );
   }
@@ -596,6 +608,8 @@ class _CursosScreenState extends State<CursosScreen> {
                     ),
                     borderRadius: BorderRadius.circular(20.0),
                   ),
+                  contentPadding: EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 12.0), // Ajusta este padding
                 ),
                 style: TextStyle(color: Colors.white),
                 onChanged: (value) {
